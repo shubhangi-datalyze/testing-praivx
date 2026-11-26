@@ -1,0 +1,193 @@
+# Shared event-property vocabulary. A property used on any event must exist here.
+# Adding a name is a deliberate vocabulary change, visible in the PR diff. Prefer reusing one.
+synonyms:
+  amount: amount_cents
+properties:
+  $current_url:
+    type: string
+    example: https://shelfie.app/search?genre=Fantasy
+    used_by: 1
+  amount_cents:
+    type: numeric
+    example: "500"
+    used_by: 2
+  author:
+    type: string
+    example: Frank Herbert
+    used_by: 1
+  book_count:
+    type: numeric
+    example: "7"
+    used_by: 1
+  book_id:
+    type: string
+    example: cm3k9x2ab0001qz8l4f7d2r5t
+    used_by: 4
+  books_read:
+    type: numeric
+    example: "3"
+    used_by: 1
+  card_last4:
+    type: string
+    example: "4242"
+    used_by: 1
+  cta:
+    type: string
+    example: hero | plan_card
+    used_by: 1
+  currency:
+    type: string
+    example: usd
+    used_by: 1
+  days_since_signup:
+    type: numeric
+    example: "42"
+    used_by: 1
+  days_subscribed:
+    type: numeric
+    example: "30"
+    used_by: 1
+  detail:
+    type: string
+    example: (the text the reader typed)
+    used_by: 1
+  expected:
+    type: numeric
+    example: "10"
+    used_by: 1
+  filter_count:
+    type: numeric
+    example: 0 | 1 | 2 | 3
+    used_by: 1
+  from_shelf:
+    type: string
+    example: want_to_read | reading | finished
+    used_by: 1
+  genre:
+    type: string
+    example: Fantasy | Mystery
+    used_by: 3
+  genre_count:
+    type: numeric
+    example: "3"
+    used_by: 1
+  genres:
+    type: array
+    example: "[Fiction, Fantasy]"
+    used_by: 1
+  has_name:
+    type: boolean
+    example: "true"
+    used_by: 1
+  has_note:
+    type: boolean
+    example: "false"
+    used_by: 1
+  has_text:
+    type: boolean
+    example: "true"
+    used_by: 1
+  invitee_email:
+    type: string
+    example: (the friend's email address)
+    used_by: 1
+  is_logged_in:
+    type: boolean
+    example: "false"
+    used_by: 1
+  item_id:
+    type: string
+    example: cm3k9x2ab0001qz8l4f7d2r5t
+    used_by: 1
+  meta:
+    type: string
+    example: (the sender's email address, from a hidden form field)
+    used_by: 1
+  method:
+    type: string
+    example: email
+    used_by: 1
+  new_goal:
+    type: numeric
+    example: "20"
+    used_by: 1
+  old_goal:
+    type: numeric
+    example: "12"
+    used_by: 1
+  onboarding_step:
+    type: numeric
+    example: 1 | 2 | 3 | 4
+    used_by: 1
+  payment_id:
+    type: string
+    example: pay_5b48c62e-5484-4225-95d5-570d4cb45992
+    used_by: 1
+  plan:
+    type: string
+    example: free | pro
+    used_by: 5
+  plan_intent:
+    type: string
+    example: pro | free
+    used_by: 1
+  platform:
+    type: string
+    example: ios
+    used_by: 1
+  query:
+    type: string
+    example: dune
+    used_by: 1
+  rating:
+    type: numeric
+    example: 1 | 2 | 3 | 4 | 5
+    used_by: 1
+  reason:
+    type: string
+    example: invalid_card | payment_failed
+    used_by: 2
+  results_count:
+    type: numeric
+    example: "4"
+    used_by: 1
+  resumed_onboarding:
+    type: boolean
+    example: "false"
+    used_by: 1
+  review:
+    type: string
+    example: (the review text the reader typed)
+    used_by: 1
+  shelf:
+    type: string
+    example: want_to_read | reading | finished
+    used_by: 1
+  source:
+    type: string
+    example: search | book_page
+    used_by: 1
+  step:
+    type: numeric
+    example: 1 | 2
+    used_by: 1
+  step_name:
+    type: string
+    example: genres | goal
+    used_by: 1
+  to_shelf:
+    type: string
+    example: want_to_read | reading | finished
+    used_by: 1
+  week_of:
+    type: string
+    example: 2026-11-23
+    used_by: 1
+  year:
+    type: numeric
+    example: "2021"
+    used_by: 1
+  yearly_goal:
+    type: numeric
+    example: "12"
+    used_by: 2

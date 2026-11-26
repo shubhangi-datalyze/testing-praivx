@@ -1,0 +1,44 @@
+events:
+  - name: reading_goal_updated
+    section: Reading goals
+    description: >-
+      Sent from the updateGoal server action after the new yearly goal is saved from /settings. Sent even when
+      the goal saved is the one already set. Not sent for a goal outside 1 to 365. The goal set during
+      onboarding sends onboarding_step_completed instead.
+    question: How often do readers change their yearly goal, and do they raise or lower it?
+    track_via: server
+    properties:
+      - { name: old_goal, type: numeric, example: "12" }
+      - { name: new_goal, type: numeric, example: "20" }
+    fires_at:
+      - page: /settings
+        element: button "Save"
+        trigger: server
+        api: POST /settings
+        from: Server action updateGoal, posted by the form on this page
+        needs: [signed_in]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: goal_reminder_sent
+    section: Reading goals
+    description: >-
+      Sent by the weekly goal-check job (npm run job:goal-check) for each reader behind pace on their yearly
+      goal, after a GoalReminder row is written for the week. No reminder is actually delivered: the job only
+      writes the row. Sent again for the same reader and week each time the job runs. The job's own PostHog
+      client is never flushed or shut down before the process exits.
+    question: How many readers fall behind their yearly goal each week, and by how much?
+    track_via: server
+    properties:
+      - { name: books_read, type: numeric, example: "3" }
+      - { name: expected, type: numeric, example: "10" }
+      - { name: yearly_goal, type: numeric, example: "12" }
+      - { name: week_of, type: string, example: "2026-11-23" }
+    fires_at:
+      - trigger: server
+        from: Run npm run job:goal-check (jobs/weekly-goal-check.ts); there is no page
+        needs: [a reader behind pace on a yearly goal]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }

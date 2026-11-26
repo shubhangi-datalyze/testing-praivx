@@ -1,0 +1,14 @@
+properties:
+  - name: platform
+    type: string
+    example: web
+    set_via: client
+    set_when: Registered by AnalyticsProvider when posthog-js loads, after cookie consent (components/analytics/analytics-provider.tsx:25)
+  - name: app_version
+    type: string
+    example: dev
+    set_via: [client, server]
+    set_when: >-
+      Registered by AnalyticsProvider when posthog-js loads, and added by the server wrapper track() to every
+      server event (lib/analytics/server.ts:27), from NEXT_PUBLIC_APP_VERSION, else "dev". The weekly job's
+      own client doesn't add it.

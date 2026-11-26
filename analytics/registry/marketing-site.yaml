@@ -1,0 +1,45 @@
+events:
+  - name: cta_clicked
+    section: Marketing site
+    description: >-
+      Sent from the browser when a visitor clicks a call to action on the landing page: the hero "Start free
+      trial" link and each pricing card's link. The hero sends plan "pro"; the cards send the plan's display
+      name ("Free", "Pro"). Signed-in visitors send it too. The nav's Sign up link doesn't send it. Nothing is
+      sent before the visitor accepts cookies.
+    question: Which landing page calls to action bring visitors to sign-up, and for which plan?
+    track_via: client
+    properties:
+      - { name: cta, type: string, example: hero | plan_card, values: [hero, plan_card] }
+      - { name: plan, type: string, example: pro | Free | Pro, values: [pro, Free, Pro] }
+      - { name: is_logged_in, type: boolean, example: "false" }
+    fires_at:
+      - page: /
+        element: link "Start free trial" (hero)
+        trigger: click
+        needs: [cookies accepted]
+      - page: /
+        element: link "Get started" or "Start free trial" (Pricing cards)
+        trigger: click
+        needs: [cookies accepted]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: $pageview
+    section: Marketing site
+    description: >-
+      PostHog's page view, sent from the browser by AnalyticsProvider on every route and query change once
+      analytics has started (after cookie consent). posthog.init also has capture_pageview on, so the first
+      page of a visit can be counted twice.
+    question: Which pages do visitors and readers see?
+    track_via: client
+    properties:
+      - { name: $current_url, type: string, example: "https://shelfie.app/search?genre=Fantasy" }
+    fires_at:
+      - page: /
+        trigger: page_load
+        from: Any page of the site or app sends it; / is the first one a visitor sees
+        needs: [cookies accepted]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }

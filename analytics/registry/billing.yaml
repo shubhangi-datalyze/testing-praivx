@@ -1,0 +1,112 @@
+events:
+  - name: checkout_started
+    section: Billing
+    description: >-
+      Sent from the browser when the checkout form mounts on /checkout (a useEffect). Only arrives when the
+      reader reaches /checkout by client-side navigation: on a full page load or refresh the form's effect runs
+      before AnalyticsProvider starts posthog-js, and capture() drops it. Free readers only: a Pro reader is
+      redirected to /settings. amount is sent as text in dollars ("5.00").
+    question: How many readers open checkout, and how many of them go on to pay?
+    track_via: client
+    properties:
+      - { name: plan, type: string, example: pro, values: [pro] }
+      - { name: amount, type: string, example: "5.00" }
+    fires_at:
+      - page: /checkout
+        element: heading "Upgrade to Pro"
+        trigger: page_load
+        needs: [signed_in, plan=free]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: checkout_completed
+    section: Billing
+    description: >-
+      Sent from the browser when the reader submits a 16-digit card number, before the payment request is
+      sent. It counts payment attempts, not payments: a payment that then fails was still sent as completed.
+    question: How many readers who start checkout complete it?
+    track_via: client
+    pair: checkout_started
+    properties:
+      - { name: plan, type: string, example: pro, values: [pro] }
+      - { name: amount_cents, type: numeric, example: "500" }
+    fires_at:
+      - page: /checkout
+        element: button "Pay and upgrade"
+        trigger: submit
+        needs: [signed_in, plan=free, a 16-digit card number]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: checkout_failed
+    section: Billing
+    description: >-
+      Sent from the browser when checkout fails: when the card number isn't 16 digits (no request is made),
+      and when the payment request returns an error.
+    question: Why do checkouts fail?
+    track_via: client
+    properties:
+      - { name: reason, type: string, example: invalid_card | payment_failed, values: [invalid_card, payment_failed] }
+      - { name: card_last4, type: string, example: "4242", only_when: reason=invalid_card }
+    fires_at:
+      - page: /checkout
+        element: button "Pay and upgrade"
+        trigger: submit
+        needs: [signed_in, plan=free, a card number that isn't 16 digits]
+      - page: /checkout
+        element: button "Pay and upgrade"
+        trigger: after_api
+        api: POST /api/payments/webhook
+        needs: [signed_in, plan=free, the payment request fails]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: payment_succeeded
+    section: Billing
+    description: >-
+      Sent from the payment webhook (POST /api/payments/webhook) for a payment.succeeded event with an id, a
+      user id and an amount, for a known user. Sent before the duplicate check and before the payment,
+      subscription and plan are written, so a webhook delivered twice is counted twice. Other webhook types
+      (a failed payment) send nothing.
+    question: How much revenue do Pro upgrades bring each week?
+    track_via: server
+    properties:
+      - { name: payment_id, type: string, example: pay_5b48c62e-5484-4225-95d5-570d4cb45992 }
+      - { name: amount_cents, type: numeric, example: "500" }
+      - { name: currency, type: string, example: usd }
+      - { name: plan, type: string, example: pro, values: [pro] }
+    fires_at:
+      - page: /checkout
+        element: button "Pay and upgrade"
+        trigger: server
+        api: POST /api/payments/webhook
+        needs: [signed_in, plan=free, a 16-digit card number]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: subscription_canceled
+    section: Billing
+    description: >-
+      Sent from the cancelSubscription server action after the active subscription is marked canceled and the
+      reader's plan set back to free. Not sent without a reason, without detail when the reason is other, or
+      when the reader has no active subscription.
+    question: Why do Pro readers cancel, and after how long?
+    track_via: server
+    properties:
+      - { name: reason, type: string, example: too_expensive | not_using | missing_features | other, values: [too_expensive, not_using, missing_features, other] }
+      - { name: detail, type: string, example: "(the text the reader typed)", only_when: the reader typed something in "Anything else?" (required when reason=other) }
+      - { name: days_subscribed, type: numeric, example: "30" }
+    fires_at:
+      - page: /settings/cancel
+        element: button "Cancel subscription"
+        trigger: server
+        api: POST /settings/cancel
+        from: Server action cancelSubscription, posted by the form on this page
+        needs: [signed_in, plan=pro]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }

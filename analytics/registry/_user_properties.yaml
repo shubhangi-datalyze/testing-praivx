@@ -1,0 +1,28 @@
+properties:
+  - name: email
+    type: string
+    example: "(the reader's email address)"
+    operation: set
+    set_via: client
+    set_when: With identify, on every page load of a signed-in reader after cookie consent
+    source: users.email
+    question: Which reader is this profile?
+    pii: true
+  - name: plan
+    type: string
+    example: free | pro
+    operation: set
+    set_via: client
+    set_when: With identify, on every page load of a signed-in reader after cookie consent, from the session's user row
+    source: users.plan
+    question: Which plan are active readers on, and how does usage differ by plan?
+    pii: false
+  - name: signed_up_at
+    type: datetime
+    example: "2026-11-26T06:12:00.000Z"
+    operation: set
+    set_via: client
+    set_when: With identify, on every page load of a signed-in reader after cookie consent
+    source: users.createdAt
+    question: How long ago did each active reader sign up?
+    pii: false

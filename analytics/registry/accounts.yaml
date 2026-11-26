@@ -1,0 +1,68 @@
+events:
+  - name: user_signed_up
+    section: Accounts
+    description: >-
+      Sent from the signup server action once the user row is created and the session cookie is set,
+      just before the redirect to onboarding. Not sent when the email is invalid, the password is under
+      8 characters or the email is already taken: those redirect back to /signup with an error and send nothing.
+      Sent with the reader's email as the distinct id, not the user id.
+    question: How many readers sign up each week, by method, and how many came from a plan call to action?
+    track_via: server
+    properties:
+      - { name: method, type: string, example: email, values: [email] }
+      - { name: plan_intent, type: string, example: pro | free }
+      - { name: has_name, type: boolean, example: "true" }
+    fires_at:
+      - page: /signup
+        element: button "Sign up"
+        trigger: server
+        api: POST /signup
+        from: Server action signup, posted by the form on this page
+        needs: [signed_out]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: user_logged_in
+    section: Accounts
+    description: >-
+      Sent from the login server action after the password matches and the session is created, before the
+      redirect to the next onboarding screen or to /shelves. Not sent on a wrong email or password (redirect
+      back to /login with an error).
+    question: How many readers log in each week, and how many come back to finish onboarding?
+    track_via: server
+    properties:
+      - { name: onboarding_step, type: numeric, example: 1 | 2 | 3 | 4, values: [1, 2, 3, 4] }
+      - { name: resumed_onboarding, type: boolean, example: "false" }
+    fires_at:
+      - page: /login
+        element: button "Log in"
+        trigger: server
+        api: POST /login
+        from: Server action login, posted by the form on this page
+        needs: [signed_out, account_exists]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: account_deleted
+    section: Accounts
+    description: >-
+      Sent from the deleteAccount server action once the reader has typed DELETE, before the session is
+      destroyed and the user row is deleted. Not sent when the confirmation text is wrong. Sent before the
+      delete itself, so a delete that fails afterwards is still counted.
+    question: How many readers delete their account, on which plan, and how long after signing up?
+    track_via: server
+    properties:
+      - { name: plan, type: string, example: free | pro, values: [free, pro] }
+      - { name: days_since_signup, type: numeric, example: "42" }
+    fires_at:
+      - page: /settings
+        element: button "Delete account"
+        trigger: server
+        api: POST /settings
+        from: Server action deleteAccount, posted by the form on this page
+        needs: [signed_in, typed DELETE in the confirmation field]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
