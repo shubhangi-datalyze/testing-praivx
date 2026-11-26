@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String
+  name           String?
+  plan           String    @default("free") // free | pro
+  favoriteGenres String    @default("") // comma-separated
+  yearlyGoal     Int       @default(12)
+  onboardingStep Int       @default(1) // 1..3, 4 = done
+  createdAt      DateTime  @default(now())
+
+  sessions      Session[]
+  shelfItems    ShelfItem[]
+  reviews       Review[]
+  invites       Invite[]
+  subscriptions Subscription[]
+  payments      Payment[]
+  reminders     GoalReminder[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Book {
+  id          String @id @default(cuid())
+  title       String
+  author      String
+  genre       String
+  year        Int
+  pages       Int
+  description String @default("")
+
+  shelfItems ShelfItem[]
+  reviews    Review[]
+}
+
+model ShelfItem {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId     String
+  book       Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  shelf      String // want_to_read | reading | finished
+  addedAt    DateTime  @default(now())
+  finishedAt DateTime?
+
+  @@unique([userId, bookId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  rating    Int
+  body      String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, bookId])
+}
+
+model Invite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+  note      String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model Subscription {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan         String    @default("pro")
+  status       String    @default("active") // active | canceled
+  startedAt    DateTime  @default(now())
+  canceledAt   DateTime?
+  cancelReason String?
+  cancelDetail String?
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalId  String   @unique
+  amountCents Int
+  currency    String   @default("usd")
+  status      String
+  createdAt   DateTime @default(now())
+}
+
+model GoalReminder {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekOf     DateTime
+  booksRead  Int
+  expected   Int
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, weekOf])
+}

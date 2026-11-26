@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-white text-neutral-900 antialiased;
+}
+
+.btn {
+  @apply inline-block rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700;
+}
+
+.btn-secondary {
+  @apply inline-block rounded border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100;
+}
+
+.input {
+  @apply w-full rounded border border-neutral-300 px-3 py-2 text-sm;
+}
+
+.label {
+  @apply mb-1 block text-sm font-medium;
+}
+
+.card {
+  @apply rounded border border-neutral-200 p-4;
+}
