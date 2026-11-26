@@ -1,0 +1,3382 @@
+{
+ "kind": "install",
+ "generated_at": "2026-11-26T12:00:00Z",
+ "snapshot_source": null,
+ "scope": null,
+ "health": null,
+ "items": [
+  {
+   "name": "$pageview",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "components/analytics/analytics-provider.tsx:37"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "account_deleted",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/settings.ts:24"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "book_added",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/search.ts:20",
+    "app/actions/shelf.ts:25"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "book_removed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/shelf.ts:55"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "book_shelf_changed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/shelf.ts:47"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "checkout_completed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/checkout/checkout-form.tsx:27"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "checkout_failed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/checkout/checkout-form.tsx:23",
+    "app/checkout/checkout-form.tsx:49"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "checkout_started",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/checkout/checkout-form.tsx:13"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "cta_clicked",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "components/analytics/track-link.tsx:9"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "goal_reminder_sent",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "jobs/weekly-goal-check.ts:40"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "invite_sent",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/invites.ts:19"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "mobile_shelves_fetched",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/api/shelves/route.ts:17"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "onboarding_completed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/onboarding.ts:59"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "onboarding_step_completed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/onboarding.ts:23",
+    "app/actions/onboarding.ts:38"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "payment_succeeded",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/api/payments/webhook/route.ts:35"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "reading_goal_updated",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/settings.ts:15"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "review_submitted",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/reviews.ts:30"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "search_performed",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "components/analytics/search-tracker.tsx:9"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "subscription_canceled",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/subscription.ts:35"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "user_logged_in",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/auth.ts:41"
+   ],
+   "checks": [],
+   "sources": []
+  },
+  {
+   "name": "user_signed_up",
+   "type": "event",
+   "bucket": "not_measured",
+   "code_refs": [
+    "app/actions/auth.ts:28"
+   ],
+   "checks": [],
+   "sources": []
+  }
+ ],
+ "findings": [
+  {
+   "id": "F1",
+   "title": "user_signed_up is sent with the reader's email as the distinct id",
+   "severity": "high",
+   "items": [
+    "user_signed_up"
+   ],
+   "explanation": "The signup action passes the email to track() as the distinct id, while identify and every other server event use users.id. Each sign-up lands on a separate PostHog person keyed by personal data, so the sign-up never joins the reader's onboarding and later events, and the activation funnel from sign-up breaks.",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:28",
+     "quote": "await track(email, \"user_signed_up\", { method: \"email\", plan_intent: planIntent, has_name: !!name });"
+    },
+    {
+     "code": "components/analytics/analytics-provider.tsx:42",
+     "quote": "posthog.identify(user.id, { email: user.email, plan: user.plan, signed_up_at: user.createdAt });"
+    }
+   ],
+   "fix": "Pass user.id (in scope from db.user.create) as the first argument of track() in signup. Past sign-ups stay on email-keyed persons; note the date in the changelog (SEMANTICS) so the funnel can start from it.",
+   "checks": [
+    "user_signed_up.values_sensible"
+   ]
+  },
+  {
+   "id": "F2",
+   "title": "invite_sent sends the friend's email and the sender's email as properties",
+   "severity": "high",
+   "items": [
+    "invite_sent"
+   ],
+   "explanation": "invitee_email is the friend's email address, and meta is the sender's own email, read from a hidden form field the browser controls. Emails must never be event properties (context.md Privacy), and the sender is already known from the distinct id.",
+   "evidence": [
+    {
+     "code": "app/actions/invites.ts:19",
+     "quote": "await track(user.id, \"invite_sent\", { invitee_email: email, has_note: note.length > 0, meta });"
+    },
+    {
+     "code": "app/invite/page.tsx:24",
+     "quote": "<input type=\"hidden\" name=\"meta\" value={user.email} />"
+    }
+   ],
+   "fix": "Stop sending invitee_email and meta; drop the hidden meta field. Send an invite_id from the created row instead (see F17).",
+   "checks": [
+    "invite_sent.values_sensible"
+   ]
+  },
+  {
+   "id": "F3",
+   "title": "review_submitted and subscription_canceled send text the reader typed",
+   "severity": "high",
+   "items": [
+    "review_submitted",
+    "subscription_canceled"
+   ],
+   "explanation": "review_submitted sends the whole review body as review, and subscription_canceled sends the free text of \"Anything else?\" as detail. Raw typed text is personal data and context.md forbids it; both texts are already stored in the database.",
+   "evidence": [
+    {
+     "code": "app/actions/reviews.ts:30",
+     "quote": "await track(user.id, \"review_submitted\", { book_id: bookId, rating, review: body, has_text: body.length > 0 });"
+    },
+    {
+     "code": "app/actions/subscription.ts:37",
+     "quote": "detail,"
+    }
+   ],
+   "fix": "Remove review and detail from the calls. Send char_count (body.length) on review_submitted and a detail_char_count on subscription_canceled if the length matters (suggestions S-review and S-detail).",
+   "checks": [
+    "review_submitted.values_sensible",
+    "review_submitted.properties",
+    "subscription_canceled.values_sensible"
+   ]
+  },
+  {
+   "id": "F4",
+   "title": "search_performed sends the typed query, ignores cookie consent and goes out as \"anonymous\"",
+   "severity": "high",
+   "items": [
+    "search_performed"
+   ],
+   "explanation": "SearchTracker sends query (the title the reader typed) through forward(), which posts to /api/events whether or not analytics has started, so readers who declined cookies are tracked too. The distinct id is the PostHog id only when posthog has loaded, else the literal \"anonymous\". The search form is a GET form, so every search is a full page load, and on a full load SearchTracker's effect runs before AnalyticsProvider starts posthog-js: nearly every search, consent or not, goes out under the one id \"anonymous\", although the page requires sign-in. Through the server relay it also loses the client super property platform, and it uses results_count where the standard name is result_count.",
+   "evidence": [
+    {
+     "code": "components/analytics/search-tracker.tsx:10",
+     "quote": "query,"
+    },
+    {
+     "code": "lib/analytics/client.ts:27",
+     "quote": "const distinct_id = posthog.__loaded ? posthog.get_distinct_id() : \"anonymous\";"
+    },
+    {
+     "code": "app/api/events/route.ts:17",
+     "quote": "await track(body.distinct_id || \"anonymous\", body.event, { ...body.properties, $lib: \"shelfie-relay\" });"
+    }
+   ],
+   "fix": "Send char_count instead of query and result_count instead of results_count. Wait until consent is granted and posthog's loaded callback has run, then send through capture() (the browser id is then the identified user.id); or send it from the search page's server side with user.id. New names are additive; drop query.",
+   "checks": [
+    "search_performed.values_sensible",
+    "search_performed.properties"
+   ]
+  },
+  {
+   "id": "F5",
+   "title": "$pageview sends the search text in its URL",
+   "severity": "high",
+   "items": [
+    "$pageview"
+   ],
+   "explanation": "The page-view effect sends $current_url as window.location.href. The search form is a GET form, so every search page view carries /search?q=<the title the reader typed>.",
+   "evidence": [
+    {
+     "code": "components/analytics/analytics-provider.tsx:37",
+     "quote": "posthog.capture(\"$pageview\", { $current_url: window.location.href });"
+    },
+    {
+     "code": "app/search/page.tsx:32",
+     "quote": "<form className=\"grid gap-3 sm:grid-cols-5\" method=\"get\">"
+    }
+   ],
+   "fix": "Add a before_send hook in posthog.init that strips q from $current_url, $referrer, $initial_referrer and $initial_current_url, in properties and in $set_once, on every event (posthog-js adds these itself, and the next page's referrer carries the search too).",
+   "checks": [
+    "$pageview.values_sensible"
+   ]
+  },
+  {
+   "id": "F6",
+   "title": "checkout_completed fires on the Pay click, before any payment",
+   "severity": "high",
+   "items": [
+    "checkout_completed"
+   ],
+   "explanation": "The browser sends checkout_completed as soon as a 16-digit card number is submitted, before the payment request is made, so every attempt, including ones that then fail, counts as completed. It has no status and no payment_id to join it to payment_succeeded, although the id is created inside the payment request's body just below.",
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:27",
+     "quote": "capture(\"checkout_completed\", { plan: \"pro\", amount_cents: amountCents });"
+    },
+    {
+     "code": "app/checkout/checkout-form.tsx:31",
+     "quote": "const res = await fetch(\"/api/payments/webhook\", {"
+    }
+   ],
+   "fix": "Treat the click as an intent: add checkout_submitted (client, with a payment_id created before both the event and the request) and deprecate checkout_completed with replaced_by checkout_submitted; take the outcome from the server (payment_completed, F10). Breaking: add the new event, keep the old one firing with deprecated, replaced_by and a dual_fire_until window (at least 30 days), and a SEMANTICS changelog line.",
+   "checks": [
+    "checkout_completed.moment",
+    "checkout_completed.name_accurate",
+    "checkout_completed.properties"
+   ]
+  },
+  {
+   "id": "F7",
+   "title": "payment_succeeded is sent before the duplicate check and before the payment is written",
+   "severity": "high",
+   "items": [
+    "payment_succeeded"
+   ],
+   "explanation": "The webhook tracks payment_succeeded before it looks for an existing payment with the same id and before the transaction that writes the payment, subscription and plan. A webhook delivered twice counts the revenue twice, and a transaction that fails still counts it.",
+   "evidence": [
+    {
+     "code": "app/api/payments/webhook/route.ts:35",
+     "quote": "await track(userId, \"payment_succeeded\", { payment_id: id, amount_cents: amountCents, currency, plan: \"pro\" });"
+    },
+    {
+     "code": "app/api/payments/webhook/route.ts:37",
+     "quote": "const duplicate = await db.payment.findUnique({ where: { externalId: id } });"
+    },
+    {
+     "code": "app/api/payments/webhook/route.ts:40",
+     "quote": "await db.$transaction(["
+    }
+   ],
+   "fix": "Move the track call after the duplicate check returns and after db.$transaction resolves. Changelog SEMANTICS line for the moved moment.",
+   "checks": [
+    "payment_succeeded.moment",
+    "payment_succeeded.once"
+   ]
+  },
+  {
+   "id": "F8",
+   "title": "payment_succeeded takes its amount from an unverified request the browser sends",
+   "severity": "high",
+   "items": [
+    "payment_succeeded"
+   ],
+   "explanation": "The checkout form posts the payment.succeeded body to the webhook itself, and the route checks no signature and doesn't compare amountCents with PRO_PRICE_CENTS. Anyone can post any amount, so revenue in PostHog can be faked from the browser. It also never checks that userId is the signed-in reader, so anyone can upgrade any account and have it counted.",
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:31",
+     "quote": "const res = await fetch(\"/api/payments/webhook\", {"
+    },
+    {
+     "code": "app/api/payments/webhook/route.ts:27",
+     "quote": "const { id, userId, amountCents, currency = \"usd\" } = event.data ?? {};"
+    }
+   ],
+   "fix": "Verify the provider's signature in the webhook (or, while it is simulated, set amount_cents from the server's price), and never accept the event from the browser.",
+   "checks": [
+    "payment_succeeded.values_sensible"
+   ]
+  },
+  {
+   "id": "F9",
+   "title": "checkout_failed is a separate failure event, sent from the browser with typed card digits",
+   "severity": "high",
+   "items": [
+    "checkout_failed"
+   ],
+   "explanation": "Failures go on their own event instead of status on the outcome, so every conversion rate needs a union. invalid_card is a browser refusal before any request and sends card_last4, the last four characters typed into the card field (card data, possibly any text, possibly empty). A network error makes fetch throw, so no checkout_failed is sent and the button stays on Processing.",
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:23",
+     "quote": "capture(\"checkout_failed\", { reason: \"invalid_card\", card_last4: card.slice(-4) });"
+    },
+    {
+     "code": "app/checkout/checkout-form.tsx:49",
+     "quote": "capture(\"checkout_failed\", { reason: \"payment_failed\" });"
+    },
+    {
+     "code": "app/checkout/checkout-form.tsx:31",
+     "quote": "const res = await fetch(\"/api/payments/webhook\", {"
+    }
+   ],
+   "fix": "Stop sending card_last4. Record payment failures as status=failed with failure_reason on the server outcome (payment_completed, F10). The client refusal (invalid_card) has no outcome event: put it on an error event (error_occurred with feature=checkout, error_reason=invalid_card, a new event for the team to approve). Catch the fetch rejection. Deprecate checkout_failed with replaced_by payment_completed for its payment_failed half. Breaking: dual-fire for at least 30 days, with a SEMANTICS changelog line.",
+   "checks": [
+    "checkout_failed.name_clear",
+    "checkout_failed.paths",
+    "checkout_failed.values_filled",
+    "checkout_failed.values_sensible"
+   ],
+   "rules": [
+    "R004 checkout_failed"
+   ]
+  },
+  {
+   "id": "F10",
+   "title": "Failed payments send nothing: no payment outcome with status",
+   "severity": "medium",
+   "items": [
+    "payment_succeeded"
+   ],
+   "explanation": "The webhook returns early for every type but payment.succeeded, and payment_succeeded carries no status or failure_reason. Today the only failures are the route's own 400 and 404 answers and a failed write, which only the browser records (checkout_failed reason=payment_failed); once a real provider sends payment.failed, those will be dropped too.",
+   "evidence": [
+    {
+     "code": "app/api/payments/webhook/route.ts:23",
+     "quote": "if (event.type !== \"payment.succeeded\") {"
+    },
+    {
+     "code": "app/api/payments/webhook/route.ts:24",
+     "quote": "return NextResponse.json({ received: true, ignored: event.type });"
+    }
+   ],
+   "fix": "Add payment_completed from the webhook, after the duplicate check and the transaction, with status=success|failed, failure_reason from the route's refusal branches (missing_fields, unknown_user; the provider's codes UNCONFIRMED until there is one), payment_id, amount_cents, currency and plan; deprecate payment_succeeded with replaced_by payment_completed. Breaking: add the new event or property, keep the old one firing with deprecated, replaced_by and a dual_fire_until window (at least 30 days), and a SEMANTICS changelog line.",
+   "checks": [
+    "payment_succeeded.properties"
+   ],
+   "proposed_events": [
+    "payment_completed"
+   ]
+  },
+  {
+   "id": "F11",
+   "title": "onboarding_completed never fires: the call sits after redirect()",
+   "severity": "high",
+   "items": [
+    "onboarding_completed"
+   ],
+   "explanation": "In addFirstBook, track(\"onboarding_completed\") comes after redirect(\"/shelves?welcome=1\"). redirect() throws, so the line never runs and no reader is ever counted as finishing onboarding.",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:58",
+     "quote": "redirect(\"/shelves?welcome=1\");"
+    },
+    {
+     "code": "app/actions/onboarding.ts:59",
+     "quote": "await track(user.id, \"onboarding_completed\", completed);"
+    }
+   ],
+   "fix": "Move the await track(...) call above the redirect.",
+   "checks": [
+    "onboarding_completed.fires"
+   ]
+  },
+  {
+   "id": "F12",
+   "title": "Onboarding events are sent again when a reader goes back and resubmits a screen",
+   "severity": "medium",
+   "items": [
+    "onboarding_step_completed",
+    "onboarding_completed"
+   ],
+   "explanation": "The onboarding pages only require a session, and the actions save and track whatever the step, so going back to a screen and submitting it again sends a second onboarding_step_completed (and, once F11 is fixed, a second onboarding_completed).",
+   "evidence": [
+    {
+     "code": "app/onboarding/genres/page.tsx:12",
+     "quote": "const user = await requireUser();"
+    },
+    {
+     "code": "app/actions/onboarding.ts:53",
+     "quote": "await db.user.update({ where: { id: user.id }, data: { onboardingStep: 4 } });"
+    }
+   ],
+   "fix": "Send onboarding_completed only when onboardingStep was below 4 before the update; add is_revisit (user.onboardingStep already past this step) to onboarding_step_completed, or skip the event on a revisit.",
+   "checks": [
+    "onboarding_step_completed.once",
+    "onboarding_completed.once"
+   ]
+  },
+  {
+   "id": "F13",
+   "title": "onboarding_step_completed.step is a number on one screen and text on the other",
+   "severity": "medium",
+   "items": [
+    "onboarding_step_completed"
+   ],
+   "explanation": "The genres screen sends step 1 as a number; the goal screen sends form.get(\"step\"), the string \"2\" from a hidden input the browser controls. The property splits into two types in PostHog.",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:23",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: 1, step_name: \"genres\", genres: picked, genre_count: picked.length });"
+    },
+    {
+     "code": "app/actions/onboarding.ts:38",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: form.get(\"step\") ?? 2, step_name: \"goal\", yearly_goal: goal });"
+    }
+   ],
+   "fix": "Hard-code step: 2 on the goal screen. If text \"2\" has already been sent, keep step numeric going forward and note the date (type change needs a new name only if the team wants history clean).",
+   "checks": [
+    "onboarding_step_completed.values_sensible"
+   ]
+  },
+  {
+   "id": "F14",
+   "title": "checkout_started is dropped when /checkout is loaded directly or refreshed",
+   "severity": "medium",
+   "items": [
+    "checkout_started"
+   ],
+   "explanation": "The checkout form's mount effect runs before AnalyticsProvider's effect starts posthog-js (the provider comes after the page in the layout), so capture() finds posthog not loaded and does nothing. Only readers who reach /checkout by client-side navigation are counted, so the checkout funnel's first step undercounts.",
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:13",
+     "quote": "capture(\"checkout_started\", { plan: \"pro\", amount: (amountCents / 100).toFixed(2) });"
+    },
+    {
+     "code": "app/layout.tsx:25",
+     "quote": "<AnalyticsProvider user={sessionUser} />"
+    },
+    {
+     "code": "lib/analytics/client.ts:21",
+     "quote": "if (!posthog.__loaded) return;"
+    }
+   ],
+   "fix": "Queue client events until posthog has loaded (capture() can push to a buffer the provider flushes in loaded), or send checkout_started from the server page.",
+   "checks": [
+    "checkout_started.paths"
+   ]
+  },
+  {
+   "id": "F15",
+   "title": "checkout_started sends amount as text and has no entry_point",
+   "severity": "low",
+   "items": [
+    "checkout_started"
+   ],
+   "explanation": "amount is (amountCents / 100).toFixed(2), the string \"5.00\" in dollars, while the other billing events send amount_cents as a number. Checkout opens from the settings Upgrade link and the landing page's Pro card, and nothing says which.",
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:13",
+     "quote": "capture(\"checkout_started\", { plan: \"pro\", amount: (amountCents / 100).toFixed(2) });"
+    },
+    {
+     "code": "app/settings/page.tsx:28",
+     "quote": "<Link href=\"/checkout\" className=\"btn\">Upgrade to Pro</Link>"
+    }
+   ],
+   "fix": "Add amount_cents (number) and entry_point (settings | pricing) and deprecate amount; a type change needs the new name.",
+   "checks": [
+    "checkout_started.values_sensible",
+    "checkout_started.properties"
+   ],
+   "rules": [
+    "R014 checkout_started.amount"
+   ]
+  },
+  {
+   "id": "F16",
+   "title": "book_added counts shelf updates as adds, and book_shelf_changed misses them",
+   "severity": "medium",
+   "items": [
+    "book_added",
+    "book_shelf_changed"
+   ],
+   "explanation": "The book page's addToShelf upserts and always sends book_added, so \"Update shelf\" on a book already shelved (or a double submit) counts as an add and never as a move. moveShelf sends book_shelf_changed even when the shelf picked is the current one, which the select defaults to.",
+   "evidence": [
+    {
+     "code": "app/actions/shelf.ts:19",
+     "quote": "await db.shelfItem.upsert({"
+    },
+    {
+     "code": "app/actions/shelf.ts:25",
+     "quote": "await track(user.id, \"book_added\", { book_id: bookId, shelf, genre: book.genre, source: \"book_page\" });"
+    },
+    {
+     "code": "app/actions/shelf.ts:47",
+     "quote": "await track(user.id, \"book_shelf_changed\", { book_id: item.bookId, from_shelf: item.shelf, to_shelf: shelf });"
+    }
+   ],
+   "fix": "In addToShelf, read the existing item first: send book_added only when it was created, book_shelf_changed (with from_shelf) when the shelf really changed, nothing otherwise. In moveShelf, skip the event when from equals to. Changelog SEMANTICS line. Add the book page path to book_shelf_changed's fires_at.",
+   "checks": [
+    "book_added.moment",
+    "book_added.name_accurate",
+    "book_added.once",
+    "book_shelf_changed.moment",
+    "book_shelf_changed.paths",
+    "book_shelf_changed.name_accurate"
+   ]
+  },
+  {
+   "id": "F17",
+   "title": "invite_sent has no status, no failure reason and no invite id",
+   "severity": "medium",
+   "items": [
+    "invite_sent"
+   ],
+   "explanation": "Invalid emails and self-invites redirect before any event, so refused invites are invisible, and the created invite's id is thrown away, so the event can't be joined to anything later. The email field is type=email and required, so invalid_email is mostly reachable only by a direct post; self_invite is the real failure.",
+   "evidence": [
+    {
+     "code": "app/actions/invites.ts:14",
+     "quote": "if (!email.includes(\"@\")) redirect(\"/invite?error=Enter+your+friend%27s+email\");"
+    },
+    {
+     "code": "app/actions/invites.ts:17",
+     "quote": "await db.invite.create({ data: { userId: user.id, email, note } });"
+    }
+   ],
+   "fix": "Send invite_sent with status=success|failed and failure_reason=self_invite|invalid_email (only_when status=failed), and invite_id from db.invite.create (only_when status=success).",
+   "checks": [
+    "invite_sent.properties"
+   ]
+  },
+  {
+   "id": "F18",
+   "title": "book_added misses the onboarding first book, and the search path leaves out genre",
+   "severity": "medium",
+   "items": [
+    "book_added"
+   ],
+   "explanation": "The first book added in onboarding only calls logEvent, a development console log, so it never reaches PostHog. Quick add from search sends book_added without genre, although book is loaded right there.",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:55",
+     "quote": "logEvent(\"book-added\", { userId: user.id, bookId: book.id, shelf: \"reading\", source: \"onboarding\" });"
+    },
+    {
+     "code": "app/actions/search.ts:20",
+     "quote": "await track(user.id, \"book_added\", { book_id: bookId, shelf: \"want_to_read\", source: \"search\" });"
+    }
+   ],
+   "fix": "Send book_added with source=onboarding from addFirstBook, before its redirect, and add onboarding to source's values; add genre: book.genre in quickAdd.",
+   "checks": [
+    "book_added.paths",
+    "book_added.properties"
+   ]
+  },
+  {
+   "id": "F19",
+   "title": "book_removed is sent when nothing was removed, and can't be joined to the book",
+   "severity": "medium",
+   "items": [
+    "book_removed"
+   ],
+   "explanation": "removeFromShelf sends book_removed after deleteMany whatever it deleted, so a double click or a stale id counts a removal that didn't happen. It carries only item_id from the form: no book_id and no shelf.",
+   "evidence": [
+    {
+     "code": "app/actions/shelf.ts:54",
+     "quote": "await db.shelfItem.deleteMany({ where: { id: itemId, userId: user.id } });"
+    },
+    {
+     "code": "app/actions/shelf.ts:55",
+     "quote": "await track(user.id, \"book_removed\", { item_id: itemId });"
+    }
+   ],
+   "fix": "Read the item first (findFirst with userId), delete it, and send book_removed only when it existed, with book_id and shelf.",
+   "checks": [
+    "book_removed.moment",
+    "book_removed.once",
+    "book_removed.properties",
+    "book_removed.values_sensible"
+   ]
+  },
+  {
+   "id": "F20",
+   "title": "search_performed fires on every open or reload of /search, not when a search settles",
+   "severity": "medium",
+   "items": [
+    "search_performed"
+   ],
+   "explanation": "SearchTracker sends from a mount effect, so opening /search from the nav or the shelves page's Find a book link counts as a search with no title or filter, and a reload or back navigation sends the same search again. query is then empty.",
+   "evidence": [
+    {
+     "code": "components/analytics/search-tracker.tsx:8",
+     "quote": "useEffect(() => {"
+    },
+    {
+     "code": "components/analytics/search-tracker.tsx:17",
+     "quote": "}, [query, genre, year, author, results]);"
+    }
+   ],
+   "fix": "Send only when a title or filter is set, once per distinct search (key on the URL's search string).",
+   "checks": [
+    "search_performed.moment",
+    "search_performed.once",
+    "search_performed.name_accurate",
+    "search_performed.values_filled"
+   ]
+  },
+  {
+   "id": "F21",
+   "title": "reset is never called at logout",
+   "severity": "high",
+   "items": [
+    "reset"
+   ],
+   "explanation": "Nothing calls posthog.reset(): logout only destroys the session. On a shared browser the next reader keeps the previous reader's distinct id until identify runs, and anything sent before that (and every page view of a logged-out visitor) lands on the previous reader.",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:46",
+     "quote": "await destroySession();"
+    },
+    {
+     "code": "components/nav.tsx:23",
+     "quote": "<form action={logout}>"
+    }
+   ],
+   "fix": "Call posthog.reset() on logout (e.g. in the provider when user goes from set to null) and after account deletion.",
+   "checks": []
+  },
+  {
+   "id": "F22",
+   "title": "identify writes the reader's email to the PostHog profile",
+   "severity": "high",
+   "items": [
+    "identify"
+   ],
+   "explanation": "AnalyticsProvider calls identify with email as a person property on every page load. context.md says never to send emails.",
+   "evidence": [
+    {
+     "code": "components/analytics/analytics-provider.tsx:42",
+     "quote": "posthog.identify(user.id, { email: user.email, plan: user.plan, signed_up_at: user.createdAt });"
+    }
+   ],
+   "fix": "Remove email from identify's properties, unset email on existing profiles, and remove it from _user_properties.yaml. (signed_up_at as set_once is a tidy-up: createdAt never changes.)",
+   "checks": []
+  },
+  {
+   "id": "F23",
+   "title": "goal_reminder_sent is probably lost, and is resent on every run",
+   "severity": "high",
+   "items": [
+    "goal_reminder_sent"
+   ],
+   "explanation": "The weekly job makes its own posthog-node client and never calls flush or shutdown: main() ends with db.$disconnect() and the error path calls process.exit(1), so queued events can be dropped when the process exits. It is sent every run although the row is upserted per reader and week, so a second run in a week counts the same reader again. It bypasses track(), so it has no app_version.",
+   "evidence": [
+    {
+     "code": "jobs/weekly-goal-check.ts:5",
+     "quote": "const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY ?? \"\", {"
+    },
+    {
+     "code": "jobs/weekly-goal-check.ts:40",
+     "quote": "posthog.capture({"
+    },
+    {
+     "code": "jobs/weekly-goal-check.ts:56",
+     "quote": ".finally(() => db.$disconnect());"
+    }
+   ],
+   "fix": "Send through the server wrapper track(), or await posthog.shutdown() on both the success and the error path before exit. Send only for a new week's row: read it with findUnique on userId_weekOf first, or create and catch the unique-constraint error (upsert doesn't say whether it created).",
+   "checks": [
+    "goal_reminder_sent.fires",
+    "goal_reminder_sent.once",
+    "goal_reminder_sent.properties"
+   ]
+  },
+  {
+   "id": "F24",
+   "title": "goal_reminder_sent says a reminder was sent, but nothing is delivered",
+   "severity": "low",
+   "items": [
+    "goal_reminder_sent"
+   ],
+   "explanation": "The job only writes a GoalReminder row; nothing in the repo reads it or notifies the reader, while the landing page sells weekly goal reminders.",
+   "evidence": [
+    {
+     "code": "jobs/weekly-goal-check.ts:35",
+     "quote": "await db.goalReminder.upsert({"
+    },
+    {
+     "code": "app/page.tsx:13",
+     "quote": "features: [\"Everything in Free\", \"Ratings and reviews\", \"Weekly goal reminders\", \"Mobile app access\"],"
+    }
+   ],
+   "fix": "Keep the name for now (renaming needs dual-fire); describe it as 'reader flagged behind pace'. When delivery is built, send a reminder_delivered outcome with status.",
+   "checks": [
+    "goal_reminder_sent.name_accurate"
+   ]
+  },
+  {
+   "id": "F25",
+   "title": "user_signed_up and user_logged_in record only successes",
+   "severity": "medium",
+   "items": [
+    "user_signed_up",
+    "user_logged_in"
+   ],
+   "explanation": "Refused sign-ups (invalid email, short password, email taken) and refused logins (wrong email or password) redirect before any event, so failure rates are invisible. The browser's required, type=email and minLength checks stop most invalid emails and short passwords, so email_taken and wrong_credentials are the failures that really reach the server.",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:22",
+     "quote": "if (existing) redirect(\"/signup?error=An+account+with+that+email+already+exists\");"
+    },
+    {
+     "code": "app/actions/auth.ts:38",
+     "quote": "redirect(\"/login?error=Wrong+email+or+password\");"
+    }
+   ],
+   "fix": "Add status=success|failed and failure_reason (invalid_email | password_too_short | email_taken; wrong_credentials) with only_when status=failed. The failed path has no user id: send it with the visitor's anonymous id passed from the form, which is a team decision (open question Q2).",
+   "checks": [
+    "user_signed_up.properties",
+    "user_logged_in.properties"
+   ]
+  },
+  {
+   "id": "F26",
+   "title": "user_signed_up.plan_intent is always null",
+   "severity": "medium",
+   "items": [
+    "user_signed_up"
+   ],
+   "explanation": "signup reads plan_intent from a form field named plan, but the signup form has no such field; the page reads ?plan= from the URL only to show a note. Sign-ups from the Pro call to action can't be told apart.",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:16",
+     "quote": "const planIntent = field(form, \"plan\") || null;"
+    },
+    {
+     "code": "app/signup/page.tsx:22",
+     "quote": "<form action={signup} className=\"space-y-4\">"
+    }
+   ],
+   "fix": "Add a hidden input name=\"plan\" with the URL's plan to the signup form, and keep plan in the URL of the error redirects so a retry keeps it.",
+   "checks": [
+    "user_signed_up.values_filled"
+   ]
+  },
+  {
+   "id": "F27",
+   "title": "mobile_shelves_fetched records every request as iOS",
+   "severity": "low",
+   "items": [
+    "mobile_shelves_fetched"
+   ],
+   "explanation": "platform is hard-coded \"ios\", so any Android client counts as iOS and the property says nothing. The route also accepts the browser's session cookie, so a browser that opens /api/shelves would be counted as mobile, though no code in the repo calls it from the web.",
+   "evidence": [
+    {
+     "code": "app/api/shelves/route.ts:17",
+     "quote": "await track(user.id, \"mobile_shelves_fetched\", { book_count: items.length, platform: \"ios\" });"
+    },
+    {
+     "code": "lib/auth.ts:68",
+     "quote": "const cookie = req.headers.get(\"cookie\") ?? \"\";"
+    }
+   ],
+   "fix": "Set platform from a header the app sends, else the User-Agent; if the request can't tell, drop the property.",
+   "checks": [
+    "mobile_shelves_fetched.name_accurate",
+    "mobile_shelves_fetched.values_sensible"
+   ]
+  },
+  {
+   "id": "F28",
+   "title": "cta_clicked splits plan by casing and misses the nav Sign up button",
+   "severity": "medium",
+   "items": [
+    "cta_clicked"
+   ],
+   "explanation": "The hero sends plan \"pro\" and the pricing cards send the display name \"Free\" or \"Pro\", so Pro shows as two values. The nav's Sign up link, shown to signed-out visitors on every page, is a call to action into sign-up and sends nothing.",
+   "evidence": [
+    {
+     "code": "app/page.tsx:29",
+     "quote": "<TrackLink href={cta} className=\"btn\" event=\"cta_clicked\" properties={{ cta: \"hero\", plan: \"pro\", is_logged_in: !!user }}>"
+    },
+    {
+     "code": "app/page.tsx:50",
+     "quote": "properties={{ cta: \"plan_card\", plan: plan.name, is_logged_in: !!user }}"
+    },
+    {
+     "code": "components/nav.tsx:32",
+     "quote": "<Link href=\"/signup\" className=\"btn\">"
+    }
+   ],
+   "fix": "Send plan: plan.name.toLowerCase() on the cards, and use TrackLink with cta=\"nav\" for the nav Sign up link (plan only_when cta is hero or plan_card; add nav to cta's values and a fires_at entry). Enum casing change: add the lower-case values and note the date.",
+   "checks": [
+    "cta_clicked.paths",
+    "cta_clicked.values_sensible"
+   ]
+  },
+  {
+   "id": "F29",
+   "title": "$pageview counts the first page of each visit twice",
+   "severity": "medium",
+   "items": [
+    "$pageview"
+   ],
+   "explanation": "posthog.init has capture_pageview: true and the provider's effect also captures $pageview once ready, so the first page after analytics starts is sent twice.",
+   "evidence": [
+    {
+     "code": "components/analytics/analytics-provider.tsx:22",
+     "quote": "capture_pageview: true,"
+    },
+    {
+     "code": "components/analytics/analytics-provider.tsx:37",
+     "quote": "posthog.capture(\"$pageview\", { $current_url: window.location.href });"
+    }
+   ],
+   "fix": "Set capture_pageview: false (the effect already sends every route change), or drop the effect and use capture_pageview: 'history_change'.",
+   "checks": [
+    "$pageview.once"
+   ]
+  },
+  {
+   "id": "F30",
+   "title": "account_deleted is sent before the account is deleted",
+   "severity": "low",
+   "items": [
+    "account_deleted"
+   ],
+   "explanation": "deleteAccount tracks before destroySession and db.user.delete, so a delete that fails is still counted.",
+   "evidence": [
+    {
+     "code": "app/actions/settings.ts:24",
+     "quote": "await track(user.id, \"account_deleted\", {"
+    },
+    {
+     "code": "app/actions/settings.ts:29",
+     "quote": "await db.user.delete({ where: { id: user.id } });"
+    }
+   ],
+   "fix": "Move the track call after db.user.delete; plan and createdAt are already in memory from requireUser().",
+   "checks": [
+    "account_deleted.moment",
+    "account_deleted.name_accurate"
+   ]
+  },
+  {
+   "id": "F31",
+   "title": "reading_goal_updated is sent when the goal didn't change",
+   "severity": "low",
+   "items": [
+    "reading_goal_updated"
+   ],
+   "explanation": "The settings input starts with the current goal and updateGoal never compares, so pressing Save without editing counts as a change.",
+   "evidence": [
+    {
+     "code": "app/actions/settings.ts:15",
+     "quote": "await track(user.id, \"reading_goal_updated\", { old_goal: user.yearlyGoal, new_goal: goal });"
+    }
+   ],
+   "fix": "Skip the update and the event when goal equals user.yearlyGoal.",
+   "checks": [
+    "reading_goal_updated.moment"
+   ]
+  },
+  {
+   "id": "F32",
+   "title": "Opening the cancel flow isn't tracked",
+   "severity": "low",
+   "items": [],
+   "explanation": "subscription_canceled records the outcome, but no event records a Pro reader opening /settings/cancel. A $pageview funnel can approximate it, but page views depend on consent and are doubled on the first page (F29).",
+   "evidence": [
+    {
+     "code": "app/settings/cancel/page.tsx:13",
+     "quote": "export default async function CancelPage({"
+    }
+   ],
+   "fix": "Add subscription_cancel_started, sent when the cancel page opens for a Pro reader, paired with subscription_canceled.",
+   "checks": [],
+   "proposed_events": [
+    "subscription_cancel_started"
+   ]
+  },
+  {
+   "id": "F33",
+   "title": "invite_sent says an invite was sent, but nothing reaches the friend",
+   "severity": "low",
+   "items": [
+    "invite_sent"
+   ],
+   "explanation": "sendInvite only stores the invite: no email or link goes out and there is no way to accept it, and the page says \"Invite saved.\" The event can't be read as the friend being contacted or used for invite-to-signup conversion.",
+   "evidence": [
+    {
+     "code": "app/actions/invites.ts:17",
+     "quote": "await db.invite.create({ data: { userId: user.id, email, note } });"
+    },
+    {
+     "code": "app/invite/page.tsx:22",
+     "quote": "{sent && <p className=\"text-sm text-green-700\">Invite saved.</p>}"
+    }
+   ],
+   "fix": "Keep the name (a rename needs dual-fire); say in the description that nothing is delivered. When delivery and acceptance are built, add invite_delivered and invite_accepted outcomes.",
+   "checks": [
+    "invite_sent.name_accurate"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "question": "checkout_completed is sent on the Pay click. How should checkout be tracked going forward?",
+   "options": [
+    {
+     "id": "a",
+     "text": "Add checkout_submitted for the click and payment_completed from the webhook as the outcome; deprecate checkout_completed and checkout_failed with a 30-day dual-fire"
+    },
+    {
+     "id": "b",
+     "text": "Keep checkout_completed's name but move it to the webhook after the payment is written"
+    },
+    {
+     "id": "c",
+     "text": "Keep it as it is"
+    }
+   ],
+   "recommended": "a",
+   "why": "The name says completed but nothing has completed; a new intent and a server outcome keep the old charts readable while they move over.",
+   "findings": [
+    "F6",
+    "F9",
+    "F10"
+   ]
+  },
+  {
+   "id": "Q2",
+   "question": "Refused sign-ups and logins have no user id. Which id should a failed user_signed_up or user_logged_in be sent with?",
+   "options": [
+    {
+     "id": "a",
+     "text": "Pass the browser's PostHog anonymous id in a hidden form field and send the failure from the server action with it; when the visitor declined cookies there is no id, and the failure is not sent"
+    },
+    {
+     "id": "b",
+     "text": "Send failures from the browser on the error redirect instead"
+    },
+    {
+     "id": "c",
+     "text": "Don't track failed sign-ups and logins"
+    }
+   ],
+   "recommended": "a",
+   "why": "The server knows the failure reason; the anonymous id joins it to the visitor's later successful sign-up.",
+   "findings": [
+    "F25"
+   ]
+  },
+  {
+   "id": "Q3",
+   "question": "Event naming: every Shelfie event is snake_case object_action (user_signed_up, book_added); the only exception is PostHog's own $pageview. Which convention should events follow?",
+   "options": [
+    {
+     "id": "a",
+     "text": "snake_case object_action, two words or more, allowing PostHog's own $-prefixed events (naming.event_pattern: '^\\$?[a-z][a-z0-9]*(_[a-z0-9]+)+$')"
+    },
+    {
+     "id": "b",
+     "text": "snake_case object_action, two words or more, as now (naming.event_pattern: '^[a-z][a-z0-9]*(_[a-z0-9]+)+$'), with $pageview left as a known exception"
+    }
+   ],
+   "recommended": "a",
+   "why": "All 20 of the team's multi-word events already use snake_case; $pageview is the vendor's name and can't change.",
+   "rules": [
+    "R001"
+   ]
+  }
+ ],
+ "no_data": [],
+ "drop_candidates": [],
+ "events": [
+  {
+   "name": "user_signed_up",
+   "tier": "identity",
+   "calls": [
+    {
+     "code": "app/actions/auth.ts:28",
+     "quote": "await track(email, \"user_signed_up\", { method: \"email\", plan_intent: planIntent, has_name: !!name });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "The signup server action is posted by the form on /signup (app/signup/page.tsx:22); the call is on the success path after the three validation redirects, so it is reachable. No data to say whether it arrives."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "On the server after db.user.create resolves and createSession sets the cookie, before redirect; the three refusal branches redirect (which throws) before it."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "signup in app/actions/auth.ts is the only place that creates a user (db.user.create appears nowhere else); /signup is the only form that posts to it."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One awaited call per request in a server action; a resubmit of the same email hits the existing-user redirect at :22 and sends nothing."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The user row exists and the session is created when it fires."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no other sign-up event in the plan."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "A sign-up can fail on the server (email taken, invalid email, short password) but the event has no status or failure_reason: every refusal redirects before the call, so the sign-up funnel can't show how many attempts fail or why.",
+     "evidence": [
+      {
+       "code": "app/actions/auth.ts:22",
+       "quote": "if (existing) redirect(\"/signup?error=An+account+with+that+email+already+exists\");"
+      },
+      {
+       "code": "app/actions/auth.ts:18",
+       "quote": "if (!email.includes(\"@\")) redirect(\"/signup?error=Enter+a+valid+email\");"
+      }
+     ],
+     "finding": "F25"
+    },
+    "values_filled": {
+     "result": "problem",
+     "why": "plan_intent is read from a form field named plan, but the /signup form has no plan field: the page reads ?plan= from the URL and only uses it for a note, never putting it in the form. So plan_intent is null on every sign-up, including those that came from a plan call to action (/signup?plan=pro and /signup?plan=free from the home page).",
+     "evidence": [
+      {
+       "code": "app/actions/auth.ts:16",
+       "quote": "const planIntent = field(form, \"plan\") || null;"
+      },
+      {
+       "code": "app/signup/page.tsx:13",
+       "quote": "const { error, plan } = await searchParams;"
+      },
+      {
+       "code": "app/signup/page.tsx:22",
+       "quote": "<form action={signup} className=\"space-y-4\">"
+      },
+      {
+       "code": "app/page.tsx:47",
+       "quote": "href={user ? (plan.name === \"Pro\" ? \"/checkout\" : \"/shelves\") : `/signup?plan=${plan.name.toLowerCase()}`}"
+      }
+     ],
+     "finding": "F26"
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "The event is sent with the reader's email as the PostHog distinct id, while identify (client) and every other server event use users.id. The sign-up lands on a separate person keyed by an email (personal data as an id, against the team's privacy rule), so it never joins the reader's later events and sign-up to activation funnels break. user.id is in scope two lines above.",
+     "evidence": [
+      {
+       "code": "app/actions/auth.ts:28",
+       "quote": "await track(email, \"user_signed_up\", { method: \"email\", plan_intent: planIntent, has_name: !!name });"
+      },
+      {
+       "code": "components/analytics/analytics-provider.tsx:42",
+       "quote": "posthog.identify(user.id, { email: user.email, plan: user.plan, signed_up_at: user.createdAt });"
+      }
+     ],
+     "finding": "F1"
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Only email, password and name are in scope besides what is sent; none can be sent. Nothing at the call site answers a new question."
+    }
+   },
+   "area": "accounts"
+  },
+  {
+   "name": "user_logged_in",
+   "tier": "identity",
+   "calls": [
+    {
+     "code": "app/actions/auth.ts:41",
+     "quote": "await track(user.id, \"user_logged_in\", { onboarding_step: user.onboardingStep, resumed_onboarding: user.onboardingStep < 4 });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "The login server action is posted by the form on /login (app/login/page.tsx:19); the call follows the password check on the success path, so it is reachable. No data to say whether it arrives."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "On the server after verifyPassword succeeds and createSession resolves; the wrong-credentials branch redirects (throws) at :38 before it."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "login is the only place that creates a session for an existing user (createSession is called only here and in signup); the mobile API reads bearer tokens but issues none."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One awaited call per request in a server action."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The session exists when it fires."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no near-duplicate in the plan."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "A login can fail (unknown email or wrong password) but the event has no status or failure_reason; the refusal redirects before the call, so failed logins can't be counted.",
+     "evidence": [
+      {
+       "code": "app/actions/auth.ts:38",
+       "quote": "redirect(\"/login?error=Wrong+email+or+password\");"
+      }
+     ],
+     "finding": "F25"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "user is non-null after the check at :37; onboardingStep is a non-null Int with default 1 (prisma/schema.prisma:19)."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "onboarding_step is the numeric onboardingStep, 1 to 4 as the onboarding actions set it, matching values: [1, 2, 3, 4]; resumed_onboarding is a boolean derived from it; distinct id is user.id, the id identify uses."
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "user.plan is in scope and the plan user property is only set from the client after cookie consent.",
+     "suggestions": [
+      "S1"
+     ]
+    }
+   },
+   "area": "accounts"
+  },
+  {
+   "name": "account_deleted",
+   "tier": "other",
+   "calls": [
+    {
+     "code": "app/actions/settings.ts:24",
+     "quote": "await track(user.id, \"account_deleted\", {"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "deleteAccount is posted by the delete form on /settings; the call follows the DELETE confirmation check, so it is reachable."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Sent before destroySession and db.user.delete: a delete that throws afterwards is still counted as a deleted account. The outcome should be sent after db.user.delete resolves (user.id, plan and createdAt are still in scope).",
+     "evidence": [
+      {
+       "code": "app/actions/settings.ts:24",
+       "quote": "await track(user.id, \"account_deleted\", {"
+      },
+      {
+       "code": "app/actions/settings.ts:29",
+       "quote": "await db.user.delete({ where: { id: user.id } });"
+      }
+     ],
+     "finding": "F30"
+    },
+    "paths": {
+     "result": "ok",
+     "why": "deleteAccount is the only place a user row is deleted."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One awaited call per request; after it the session is gone, so a resubmit is redirected by requireUser."
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Nothing is deleted yet when it fires (same cause as moment).",
+     "evidence": [
+      {
+       "code": "app/actions/settings.ts:24",
+       "quote": "await track(user.id, \"account_deleted\", {"
+      }
+     ],
+     "finding": "F30"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no near-duplicate."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "plan and days_since_signup on the single path."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "user comes from requireUser (non-null); plan is a non-null String with default free; createdAt is non-null."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "plan is free | pro (schema comment); days_since_signup is a whole number of days computed as a number, not text."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Tier other; no suggestion."
+    }
+   },
+   "area": "accounts"
+  },
+  {
+   "name": "checkout_started",
+   "tier": "money",
+   "calls": [
+    {
+     "code": "app/checkout/checkout-form.tsx:13",
+     "quote": "capture(\"checkout_started\", { plan: \"pro\", amount: (amountCents / 100).toFixed(2) });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "CheckoutForm is rendered by app/checkout/page.tsx:16 for every free reader; the useEffect at :12 runs on mount. capture() is a no-op until cookie consent starts posthog-js."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "An intent event on mount of the checkout form, after the server page has redirected Pro readers away (page.tsx:8); the right side (client) for an intent."
+    },
+    "paths": {
+     "result": "problem",
+     "why": "Lost on a full page load or refresh of /checkout: React runs the page's effects (inside <main>) before AnalyticsProvider's init effect, which sits after {children} in app/layout.tsx, so capture() sees posthog.__loaded false and returns. It only arrives when the reader reaches /checkout by client-side navigation (Upgrade to Pro link in settings, plan card on the home page).",
+     "evidence": [
+      {
+       "code": "app/layout.tsx:23",
+       "quote": "<main className=\"mx-auto max-w-4xl px-4 py-8\">{children}</main>"
+      },
+      {
+       "code": "app/layout.tsx:25",
+       "quote": "<AnalyticsProvider user={sessionUser} />"
+      },
+      {
+       "code": "lib/analytics/client.ts:21",
+       "quote": "if (!posthog.__loaded) return;"
+      }
+     ],
+     "finding": "F14"
+    },
+    "once": {
+     "result": "ok",
+     "why": "One effect with a numeric dependency (amountCents, a server constant), so it runs once per mount; a re-visit is a new intent by design."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The checkout form is on screen when it fires."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "object_action, snake_case; checkout_completed is its pair, not a duplicate."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "Checkout has two ways in (the Upgrade to Pro link in settings and the Pro plan card on the home page) but no entry_point, so nobody can tell which surface drives upgrades.",
+     "evidence": [
+      {
+       "code": "app/settings/page.tsx:28",
+       "quote": "<Link href=\"/checkout\" className=\"btn\">Upgrade to Pro</Link>"
+      },
+      {
+       "code": "app/page.tsx:47",
+       "quote": "href={user ? (plan.name === \"Pro\" ? \"/checkout\" : \"/shelves\") : `/signup?plan=${plan.name.toLowerCase()}`}"
+      }
+     ],
+     "finding": "F15"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "plan is the literal \"pro\"; amountCents is PRO_PRICE_CENTS (500) passed from the server page, never undefined."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "amount is sent as text in dollars (\"5.00\") from toFixed(2), while checkout_completed and payment_succeeded send amount_cents as a number: sums break and the same price lives under two names and units.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:13",
+       "quote": "capture(\"checkout_started\", { plan: \"pro\", amount: (amountCents / 100).toFixed(2) });"
+      }
+     ],
+     "finding": "F15"
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Only userId and amountCents are in scope at the call; nothing else answers a new question (entry_point is raised under properties)."
+    }
+   },
+   "area": "billing"
+  },
+  {
+   "name": "checkout_completed",
+   "tier": "money",
+   "calls": [
+    {
+     "code": "app/checkout/checkout-form.tsx:27",
+     "quote": "capture(\"checkout_completed\", { plan: \"pro\", amount_cents: amountCents });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "Reached in onSubmit for any 16-digit card once posthog-js has started (after consent)."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Sent from the browser on submit, before the payment request at :31 is even sent: every attempt counts as completed, including the ones that then fail at :47. A money outcome belongs on the server after the payment is recorded; it is also dropped for readers who declined cookies.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:27",
+       "quote": "capture(\"checkout_completed\", { plan: \"pro\", amount_cents: amountCents });"
+      },
+      {
+       "code": "app/checkout/checkout-form.tsx:31",
+       "quote": "const res = await fetch(\"/api/payments/webhook\", {"
+      }
+     ],
+     "finding": "F6"
+    },
+    "paths": {
+     "result": "ok",
+     "why": "The checkout form is the only way to pay; the one submit handler sends it."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One call per submit, and the button is disabled while the request is pending."
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Nothing is completed when it fires: the payment hasn't been requested yet. It is a checkout_submitted intent.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:27",
+       "quote": "capture(\"checkout_completed\", { plan: \"pro\", amount_cents: amountCents });"
+      }
+     ],
+     "finding": "F6"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "object_action, snake_case; no other event uses the name."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "Presented as the checkout outcome but has no status or failure_reason, and no payment_id to join it to payment_succeeded, although the id is generated three lines later.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:37",
+       "quote": "id: `pay_${crypto.randomUUID()}`,"
+      }
+     ],
+     "finding": "F6"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "plan is the literal \"pro\"; amount_cents is the amountCents prop, PRO_PRICE_CENTS from the server page."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "amount_cents is a number in cents (500), from the server constant, not typed by the reader."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "The fix is moving the outcome to the server, not adding properties to a click; payment_id is raised under properties."
+    }
+   },
+   "area": "billing"
+  },
+  {
+   "name": "checkout_failed",
+   "tier": "money",
+   "calls": [
+    {
+     "code": "app/checkout/checkout-form.tsx:23",
+     "quote": "capture(\"checkout_failed\", { reason: \"invalid_card\", card_last4: card.slice(-4) });"
+    },
+    {
+     "code": "app/checkout/checkout-form.tsx:49",
+     "quote": "capture(\"checkout_failed\", { reason: \"payment_failed\" });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "Both branches of onSubmit are reachable: a card that isn't 16 digits, and a non-2xx response from the payment endpoint (400 missing fields, 404 unknown user, 500)."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Each call is after the failure is known: after the regex check fails (:21), and after the response comes back not ok (:47)."
+    },
+    "paths": {
+     "result": "problem",
+     "why": "If fetch rejects (network error, offline) the await at :31 throws: no checkout_failed is sent, and setPending(false) never runs, so the button stays on Processing.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:31",
+       "quote": "const res = await fetch(\"/api/payments/webhook\", {"
+      }
+     ],
+     "finding": "F9"
+    },
+    "once": {
+     "result": "ok",
+     "why": "Each branch sends once and returns."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "Both calls fire on a checkout that did not go through."
+    },
+    "name_clear": {
+     "result": "problem",
+     "why": "A separate _failed event next to checkout_completed: conversion needs a union. The invalid_card branch is a client refusal before any request (belongs on an error event), and payment_failed belongs as status=failed on the server payment outcome. Its `reason` property also means a failure code here but a cancellation reason on subscription_canceled, instead of the standard failure_reason.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:23",
+       "quote": "capture(\"checkout_failed\", { reason: \"invalid_card\", card_last4: card.slice(-4) });"
+      },
+      {
+       "code": "app/checkout/checkout-form.tsx:49",
+       "quote": "capture(\"checkout_failed\", { reason: \"payment_failed\" });"
+      }
+     ],
+     "finding": "F9"
+    },
+    "properties": {
+     "result": "ok",
+     "why": "reason on both calls; card_last4 only on invalid_card, as the plan's only_when says."
+    },
+    "values_filled": {
+     "result": "problem",
+     "why": "card is the typed input with whitespace stripped; a field of spaces passes the HTML required check and yields card_last4 = \"\", and a short entry yields fewer than four characters.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:20",
+       "quote": "const card = String(form.get(\"card\") ?? \"\").replace(/\\s+/g, \"\");"
+      }
+     ],
+     "finding": "F9"
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "card_last4 is the last four characters of whatever the reader typed in the card field, which failed the digit check, so it can hold letters or other typed text: card details and raw typed text, both banned by the privacy rules and context.md. It answers no question about why checkouts fail.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:23",
+       "quote": "capture(\"checkout_failed\", { reason: \"invalid_card\", card_last4: card.slice(-4) });"
+      }
+     ],
+     "finding": "F9"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "The response status is in scope on the payment_failed branch.",
+     "suggestions": [
+      "S2"
+     ]
+    }
+   },
+   "area": "billing"
+  },
+  {
+   "name": "payment_succeeded",
+   "tier": "money",
+   "calls": [
+    {
+     "code": "app/api/payments/webhook/route.ts:35",
+     "quote": "await track(userId, \"payment_succeeded\", { payment_id: id, amount_cents: amountCents, currency, plan: \"pro\" });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "Reached for every payment.succeeded webhook with id, userId and a numeric amount for a known user; the checkout form posts exactly that."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Sent before the payment, subscription and plan are written: if the transaction at :40 throws, revenue is counted for a reader who never became Pro.",
+     "evidence": [
+      {
+       "code": "app/api/payments/webhook/route.ts:35",
+       "quote": "await track(userId, \"payment_succeeded\", { payment_id: id, amount_cents: amountCents, currency, plan: \"pro\" });"
+      },
+      {
+       "code": "app/api/payments/webhook/route.ts:40",
+       "quote": "await db.$transaction(["
+      }
+     ],
+     "finding": "F7"
+    },
+    "paths": {
+     "result": "ok",
+     "why": "This route is the only writer of payment rows and of plan=pro; no other code path upgrades a reader."
+    },
+    "once": {
+     "result": "problem",
+     "why": "Sent before the duplicate check, so a webhook delivered twice (providers retry) is counted twice while the second delivery writes nothing.",
+     "evidence": [
+      {
+       "code": "app/api/payments/webhook/route.ts:37",
+       "quote": "const duplicate = await db.payment.findUnique({ where: { externalId: id } });"
+      }
+     ],
+     "finding": "F7"
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The provider has reported the payment as succeeded when it fires (the recording is the C2 problem)."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "object_action, snake_case; no near-duplicate in the plan."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "A money outcome that can fail with no status or failure_reason: any other webhook type (a failed payment) returns at :24 and sends nothing, so failed payments are invisible on the server.",
+     "evidence": [
+      {
+       "code": "app/api/payments/webhook/route.ts:24",
+       "quote": "return NextResponse.json({ received: true, ignored: event.type });"
+      }
+     ],
+     "finding": "F10"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "id, userId and a numeric amountCents are checked at :28 before the call; currency defaults to usd only when absent; plan is the literal pro."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "amount_cents is whatever the request body says: the browser itself posts the webhook with its own amountCents, and the route neither verifies a signature nor checks it against PRO_PRICE_CENTS, so revenue can be faked from the browser.",
+     "evidence": [
+      {
+       "code": "app/checkout/checkout-form.tsx:39",
+       "quote": "amountCents,"
+      },
+      {
+       "code": "app/api/payments/webhook/route.ts:27",
+       "quote": "const { id, userId, amountCents, currency = \"usd\" } = event.data ?? {};"
+      }
+     ],
+     "finding": "F8"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "The user row is loaded two lines above the call.",
+     "suggestions": [
+      "S3"
+     ]
+    }
+   },
+   "area": "billing"
+  },
+  {
+   "name": "subscription_canceled",
+   "tier": "money",
+   "calls": [
+    {
+     "code": "app/actions/subscription.ts:35",
+     "quote": "await track(user.id, \"subscription_canceled\", {"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "The cancel form on /settings/cancel posts to cancelSubscription; the call runs after validation for any reader with an active subscription."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "On the server after the transaction marking the subscription canceled and plan=free resolves (:28-34), before the redirect."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "cancelSubscription is the only code that sets status canceled; deleting a Pro account removes the subscription by cascade but sends account_deleted with plan=pro."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One call per action; a second submit finds no active subscription and redirects at :26 without sending."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The subscription row is canceled when it fires."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "object_action, snake_case; no other cancel event."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "reason, detail and days_subscribed on the single call; detail is empty outside its only_when."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "reason is validated against REASONS (:15); days_subscribed comes from subscription.startedAt, a non-null column; detail is \"\" when nothing was typed, which its only_when allows."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "detail is the free text the reader typed in \"Anything else?\" (up to 1000 characters), sent as an event property: raw typed text, which the privacy rules and context.md forbid. It is already stored in subscription.cancelDetail; send a length instead.",
+     "evidence": [
+      {
+       "code": "app/actions/subscription.ts:13",
+       "quote": "const detail = String(form.get(\"detail\") ?? \"\").trim().slice(0, 1000);"
+      },
+      {
+       "code": "app/actions/subscription.ts:37",
+       "quote": "detail,"
+      }
+     ],
+     "finding": "F3"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "detail is in scope; its length can replace the text.",
+     "suggestions": [
+      "S4"
+     ]
+    }
+   },
+   "area": "billing"
+  },
+  {
+   "name": "reading_goal_updated",
+   "tier": "other",
+   "calls": [
+    {
+     "code": "app/actions/settings.ts:15",
+     "quote": "await track(user.id, \"reading_goal_updated\", { old_goal: user.yearlyGoal, new_goal: goal });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "The updateGoal server action is the action of the Save form on /settings (app/settings/page.tsx:34); the call runs after validation and the update, before redirect()."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Sent after db.user.update resolves, but also when the saved goal equals the current one: the input is pre-filled with the current goal and there is no old != new check, so pressing Save without changing it counts as a goal change and inflates 'how often do readers change their goal'.",
+     "evidence": [
+      {
+       "code": "app/actions/settings.ts:14",
+       "quote": "await db.user.update({ where: { id: user.id }, data: { yearlyGoal: goal } });"
+      },
+      {
+       "code": "app/actions/settings.ts:15",
+       "quote": "await track(user.id, \"reading_goal_updated\", { old_goal: user.yearlyGoal, new_goal: goal });"
+      },
+      {
+       "code": "app/settings/page.tsx:41",
+       "quote": "defaultValue={user.yearlyGoal}"
+      }
+     ],
+     "finding": "F31"
+    },
+    "paths": {
+     "result": "ok",
+     "why": "Settings is the only place outside onboarding that writes yearlyGoal; onboarding's saveGoal sends onboarding_step_completed with yearly_goal, as the plan says."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One awaited call per form submission, on the server."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The goal row is written when it fires (apart from the no-op case under moment)."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no near-duplicate in the plan."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "old_goal and new_goal on the only call; the out-of-range path redirects before the call and the browser blocks it via min/max."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "old_goal is user.yearlyGoal from requireUser (Int, default 12); new_goal is the validated integer."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "Both numeric integers 1..365 (old_goal can be the default 12); sent as numbers, no personal data."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Tier other."
+    }
+   },
+   "area": "goals"
+  },
+  {
+   "name": "goal_reminder_sent",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "jobs/weekly-goal-check.ts:40",
+     "quote": "posthog.capture({"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "problem",
+     "why": "Reachable (npm run job:goal-check, package.json:11; no scheduler in the repo), but the job's own posthog-node client only queues capture() for a batched flush and is never flushed or shut down: main() ends with db.$disconnect() only, and the error path calls process.exit(1). Events still queued when the process exits are lost. This is from the code, not from data.",
+     "evidence": [
+      {
+       "code": "jobs/weekly-goal-check.ts:5",
+       "quote": "const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY ?? \"\", {"
+      },
+      {
+       "code": "jobs/weekly-goal-check.ts:56",
+       "quote": ".finally(() => db.$disconnect());"
+      }
+     ],
+     "finding": "F23"
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Sent in the loop right after goalReminder.upsert resolves, only for a reader whose booksRead < expected."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "The weekly job is the only writer of GoalReminder; no other route or service flags readers."
+    },
+    "once": {
+     "result": "problem",
+     "why": "The row is an upsert on (userId, weekOf), but the event is sent on every run: re-running the job in the same week sends goal_reminder_sent again for the same reader and week_of.",
+     "evidence": [
+      {
+       "code": "jobs/weekly-goal-check.ts:38",
+       "quote": "update: { booksRead, expected },"
+      },
+      {
+       "code": "jobs/weekly-goal-check.ts:42",
+       "quote": "event: \"goal_reminder_sent\","
+      }
+     ],
+     "finding": "F23"
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Nothing is sent to the reader: the job only upserts a GoalReminder row, and nothing in the repo reads that table or sends an email/notification. The event records 'reader flagged behind pace', not a reminder delivered (yet the home page sells 'Weekly goal reminders').",
+     "evidence": [
+      {
+       "code": "jobs/weekly-goal-check.ts:35",
+       "quote": "await db.goalReminder.upsert({"
+      },
+      {
+       "code": "app/page.tsx:13",
+       "quote": "\"Weekly goal reminders\""
+      }
+     ],
+     "finding": "F24"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no near-duplicate in the plan."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "Sent with the job's own posthog.capture, not the server wrapper track(), so it lacks app_version, which the wrapper adds to every other server event (super_property_missing). books_read, expected, yearly_goal and week_of are all on the only call.",
+     "evidence": [
+      {
+       "code": "jobs/weekly-goal-check.ts:43",
+       "quote": "properties: { books_read: booksRead, expected, yearly_goal: user.yearlyGoal, week_of: weekOf.toISOString().slice(0, 10) },"
+      },
+      {
+       "code": "lib/analytics/server.ts:27",
+       "quote": "properties: { ...properties, app_version: process.env.NEXT_PUBLIC_APP_VERSION ?? \"dev\" },"
+      }
+     ],
+     "finding": "F23"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "booksRead is a count(), expected is Math.floor of a positive goal times the year fraction, yearly_goal is a non-null Int (readers with goal <= 0 skipped at :27), week_of is always a YYYY-MM-DD string from startOfWeek."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "Counts and goal sent as numbers; week_of is the UTC Monday as YYYY-MM-DD; distinctId is user.id, the id the client identifies with; email is selected but not sent."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Nothing else in scope at the call answers a new question: books behind is expected - books_read, and the reader's plan isn't selected."
+    }
+   },
+   "area": "goals"
+  },
+  {
+   "name": "invite_sent",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "app/actions/invites.ts:19",
+     "quote": "await track(user.id, \"invite_sent\", { invitee_email: email, has_note: note.length > 0, meta });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "Reachable: the /invite page (linked from the nav, components/nav.tsx:17) renders <form action={sendInvite}>, and the call runs on every valid submit; track() only no-ops when NEXT_PUBLIC_POSTHOG_KEY is unset."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Server outcome: sent after both refusals (no @, self-invite) have redirected away and after await db.invite.create resolves, before redirect() (which throws), as lib/analytics/server.ts asks."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "sendInvite is the only writer of db.invite in the repo and the /invite form is its only caller; no API route, job or other button creates invites."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One awaited call per request on the server; each send creates its own Invite row, so a repeated invite to the same email is a real second row, not a no-op."
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Nothing is sent to the friend: the invite is only stored (no email, no link, no acceptance flow), and the page itself tells the reader 'Invite saved.' Analysts reading invite_sent will assume the friend was contacted. Keep the name (renames need a dual-fire window) but say it in the description and don't build invite-to-signup conversion on it.",
+     "evidence": [
+      {
+       "code": "app/actions/invites.ts:17",
+       "quote": "await db.invite.create({ data: { userId: user.id, email, note } });"
+      },
+      {
+       "code": "app/invite/page.tsx:22",
+       "quote": "{sent && <p className=\"text-sm text-green-700\">Invite saved.</p>}"
+      }
+     ],
+     "finding": "F33"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action per _conventions.yaml; no other invite_* event in the plan."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "An outcome that can fail carries no status or failure_reason: the server refuses an email without @ and a self-invite with a redirect before any event, so refusals are invisible. No invite_id joins the event to the Invite row (the create result is discarded).",
+     "evidence": [
+      {
+       "code": "app/actions/invites.ts:14",
+       "quote": "if (!email.includes(\"@\")) redirect(\"/invite?error=Enter+your+friend%27s+email\");"
+      },
+      {
+       "code": "app/actions/invites.ts:15",
+       "quote": "if (email === user.email) redirect(\"/invite?error=You+can%27t+invite+yourself\");"
+      },
+      {
+       "code": "app/actions/invites.ts:17",
+       "quote": "await db.invite.create({ data: { userId: user.id, email, note } });"
+      }
+     ],
+     "finding": "F17"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "invitee_email is non-empty (must contain @), has_note is always a boolean from note.length > 0; meta falls back to \"\" via String(form.get(\"meta\") ?? \"\") only if the hidden field is removed."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "Personal data: invitee_email is the friend's email address (a non-user who never consented) and meta is the sender's own email, read from a hidden form field the browser controls (so it can be forged) and duplicating user.id which already identifies the sender. context.md forbids sending emails. Drop both properties.",
+     "evidence": [
+      {
+       "code": "app/actions/invites.ts:19",
+       "quote": "await track(user.id, \"invite_sent\", { invitee_email: email, has_note: note.length > 0, meta });"
+      },
+      {
+       "code": "app/actions/invites.ts:12",
+       "quote": "const meta = String(form.get(\"meta\") ?? \"\");"
+      },
+      {
+       "code": "app/invite/page.tsx:24",
+       "quote": "<input type=\"hidden\" name=\"meta\" value={user.email} />"
+      }
+     ],
+     "finding": "F2"
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "In scope at the call are only user, email, note and meta; has_note already covers the note, and the missing invite_id is a C7 problem, not a suggestion."
+    }
+   },
+   "area": "invites"
+  },
+  {
+   "name": "search_performed",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "components/analytics/search-tracker.tsx:9",
+     "quote": "forward(\"search_performed\", {"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "SearchTracker is rendered unconditionally by the /search server page (app/search/page.tsx:55) and its useEffect calls forward(), which POSTs to /api/events; the relay allows search_performed and calls track(). Reachable for every signed-in reader on /search."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Fires in a mount effect, so simply opening /search (no title, no filter: q, genre, year and author all default to \"\") sends a search. Page opens are counted as searches, inflating the count and the zero-filter share.",
+     "evidence": [
+      {
+       "code": "components/analytics/search-tracker.tsx:8",
+       "quote": "useEffect(() => {"
+      },
+      {
+       "code": "app/search/page.tsx:13",
+       "quote": "const { q = \"\", genre = \"\", year = \"\", author = \"\" } = await searchParams;"
+      }
+     ],
+     "finding": "F20"
+    },
+    "paths": {
+     "result": "ok",
+     "why": "The only way to search is the GET form on /search (app/search/page.tsx:32); every submit reloads the page with new params and SearchTracker re-runs. No API or mobile search exists."
+    },
+    "once": {
+     "result": "problem",
+     "why": "The effect runs on every mount, so a refresh or a back/forward navigation to the same /search?q=... URL sends the same search again; nothing dedupes an unchanged search.",
+     "evidence": [
+      {
+       "code": "components/analytics/search-tracker.tsx:17",
+       "quote": "}, [query, genre, year, author, results]);"
+      }
+     ],
+     "finding": "F20"
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Same cause as moment: on a plain page open nothing was searched, yet search_performed is sent.",
+     "evidence": [
+      {
+       "code": "app/search/page.tsx:55",
+       "quote": "<SearchTracker query={q} genre={genre} year={year} author={author} results={books.length} />"
+      }
+     ],
+     "finding": "F20"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action, matches the event pattern; no other search event in the plan."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "Sends the raw query instead of char_count (the standard property for typed text), and names the result count results_count instead of the standard result_count. Because it goes through the server relay, the client super property platform is not on it.",
+     "evidence": [
+      {
+       "code": "components/analytics/search-tracker.tsx:10",
+       "quote": "query,"
+      },
+      {
+       "code": "components/analytics/search-tracker.tsx:15",
+       "quote": "results_count: results,"
+      }
+     ],
+     "finding": "F4"
+    },
+    "values_filled": {
+     "result": "problem",
+     "why": "query is \"\" on every page open and every filter-only search. year is Number(year) unguarded: a non-numeric year param gives NaN (sent as null) while filter_count still counts it, whereas the page itself ignores it.",
+     "evidence": [
+      {
+       "code": "components/analytics/search-tracker.tsx:12",
+       "quote": "year: year ? Number(year) : null,"
+      },
+      {
+       "code": "app/search/page.tsx:19",
+       "quote": "if (year && Number(year)) where.year = Number(year);"
+      }
+     ],
+     "finding": "F20"
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "query is the raw text the reader typed (personal data, forbidden by context.md Privacy). The distinct id is the browser's PostHog id or the literal \"anonymous\" when analytics hasn't started, so every visitor who declined or hasn't answered the cookie banner is merged into one \"anonymous\" person, and the event is sent despite declined consent. The page requires a signed-in user, so the server knows user.id but doesn't use it.",
+     "evidence": [
+      {
+       "code": "components/analytics/search-tracker.tsx:10",
+       "quote": "query,"
+      },
+      {
+       "code": "lib/analytics/client.ts:27",
+       "quote": "const distinct_id = posthog.__loaded ? posthog.get_distinct_id() : \"anonymous\";"
+      },
+      {
+       "code": "app/api/events/route.ts:17",
+       "quote": "await track(body.distinct_id || \"anonymous\", body.event, { ...body.properties, $lib: \"shelfie-relay\" });"
+      }
+     ],
+     "finding": "F4"
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "char_count (query.length) belongs in the properties fix above; no other value in scope at the call site answers a new question."
+    }
+   },
+   "area": "library"
+  },
+  {
+   "name": "book_added",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "app/actions/search.ts:20",
+     "quote": "await track(user.id, \"book_added\", { book_id: bookId, shelf: \"want_to_read\", source: \"search\" });"
+    },
+    {
+     "code": "app/actions/shelf.ts:25",
+     "quote": "await track(user.id, \"book_added\", { book_id: bookId, shelf, genre: book.genre, source: \"book_page\" });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "quickAdd is posted by the '+ Want to read' form on /search (app/search/page.tsx:73) and addToShelf by the book page form (app/books/[id]/page.tsx:38); both reach their track() call after the DB write."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "On the book page the call follows an upsert, so it is sent when an existing shelf item is changed with 'Update shelf', and even when the reader resubmits the shelf the book is already on. Moves and no-ops are counted as adds.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:19",
+       "quote": "await db.shelfItem.upsert({"
+      },
+      {
+       "code": "app/books/[id]/page.tsx:50",
+       "quote": "<button className=\"btn\">{item ? \"Update shelf\" : \"Add to shelf\"}</button>"
+      }
+     ],
+     "finding": "F16"
+    },
+    "paths": {
+     "result": "problem",
+     "why": "The first book added in onboarding creates a shelf item but only calls logEvent (a dev-only console log), so the reader's first book never sends book_added.",
+     "evidence": [
+      {
+       "code": "app/actions/onboarding.ts:55",
+       "quote": "logEvent(\"book-added\", { userId: user.id, bookId: book.id, shelf: \"reading\", source: \"onboarding\" });"
+      }
+     ],
+     "finding": "F18"
+    },
+    "once": {
+     "result": "problem",
+     "why": "A double submit of 'Add to shelf' runs the upsert twice without error and sends book_added twice. (quickAdd is guarded: it only creates and sends when no item exists.)",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:19",
+       "quote": "await db.shelfItem.upsert({"
+      }
+     ],
+     "finding": "F16"
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Same cause as moment: on the 'Update shelf' path nothing is added; the book moves shelf (or nothing changes).",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:22",
+       "quote": "update: { shelf, finishedAt: shelf === \"finished\" ? new Date() : null },"
+      }
+     ],
+     "finding": "F16"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; book_shelf_changed is a different action, not a duplicate."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "genre is in the plan with no only_when but the search path leaves it out, though book (with genre) is loaded two lines up. No source value for onboarding, since that path doesn't send.",
+     "evidence": [
+      {
+       "code": "app/actions/search.ts:20",
+       "quote": "await track(user.id, \"book_added\", { book_id: bookId, shelf: \"want_to_read\", source: \"search\" });"
+      },
+      {
+       "code": "app/actions/search.ts:12",
+       "quote": "const book = await db.book.findUnique({ where: { id: bookId } });"
+      }
+     ],
+     "finding": "F18"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "book_id is the form value of a book that findUnique confirmed exists; shelf is a literal or validated by isShelf; genre is a non-null String column (prisma Book.genre); source is a literal on each call."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "shelf values come from SHELVES ids (want_to_read, reading, finished) as planned; source is search or book_page as planned; distinct id is user.id from the session."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "No value already in scope answers a new question; whether it was a first book or a move needs a value the calls don't hold (the upsert doesn't say whether it created)."
+    }
+   },
+   "area": "library"
+  },
+  {
+   "name": "book_shelf_changed",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "app/actions/shelf.ts:47",
+     "quote": "await track(user.id, \"book_shelf_changed\", { book_id: item.bookId, from_shelf: item.shelf, to_shelf: shelf });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "moveShelf is posted by the Move form on every shelf item on /shelves (app/shelves/page.tsx:51) and reaches track() after the update."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Sent after the update even when the shelf picked equals the current one; the select defaults to the current shelf, so clicking Move without changing it sends from_shelf = to_shelf.",
+     "evidence": [
+      {
+       "code": "app/shelves/page.tsx:53",
+       "quote": "<select className=\"input w-auto\" name=\"shelf\" defaultValue={item.shelf}>"
+      },
+      {
+       "code": "app/actions/shelf.ts:47",
+       "quote": "await track(user.id, \"book_shelf_changed\", { book_id: item.bookId, from_shelf: item.shelf, to_shelf: shelf });"
+      }
+     ],
+     "finding": "F16"
+    },
+    "paths": {
+     "result": "problem",
+     "why": "Changing an existing book's shelf from the book page ('Update shelf') moves it too, but sends book_added instead, so moves made there (including marking finished) are missing here.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:25",
+       "quote": "await track(user.id, \"book_added\", { book_id: bookId, shelf, genre: book.genre, source: \"book_page\" });"
+      }
+     ],
+     "finding": "F16"
+    },
+    "once": {
+     "result": "ok",
+     "why": "One call per moveShelf request; no client call for the same action."
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "Same cause as moment: when from_shelf equals to_shelf nothing changed.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:47",
+       "quote": "await track(user.id, \"book_shelf_changed\", { book_id: item.bookId, from_shelf: item.shelf, to_shelf: shelf });"
+      }
+     ],
+     "finding": "F16"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action, clear and distinct from book_added."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "book_id, from_shelf and to_shelf are on the only call; nothing in the plan is left out."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "item is loaded and checked non-null before; from_shelf is item.shelf read before the update; to_shelf passed isShelf."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "from_shelf comes from the DB row before the update (the right source), to_shelf from the validated form; both in SHELVES ids; distinct id user.id."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Only item and shelf are in scope; to_shelf already answers 'how many get finished'."
+    }
+   },
+   "area": "library"
+  },
+  {
+   "name": "book_removed",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "app/actions/shelf.ts:55",
+     "quote": "await track(user.id, \"book_removed\", { item_id: itemId });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "removeFromShelf is posted by the Remove form on every shelf item on /shelves (app/shelves/page.tsx:67)."
+    },
+    "moment": {
+     "result": "problem",
+     "why": "Sent after deleteMany whatever it deleted: an item id that isn't the reader's, or one already removed, sends book_removed with nothing removed.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:54",
+       "quote": "await db.shelfItem.deleteMany({ where: { id: itemId, userId: user.id } });"
+      }
+     ],
+     "finding": "F19"
+    },
+    "paths": {
+     "result": "ok",
+     "why": "The Remove button on /shelves is the only way to delete a shelf item; the book page and the mobile API have no remove."
+    },
+    "once": {
+     "result": "problem",
+     "why": "Same cause as moment: a double click on Remove runs deleteMany twice (the second deletes 0 rows) and sends two events.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:55",
+       "quote": "await track(user.id, \"book_removed\", { item_id: itemId });"
+      }
+     ],
+     "finding": "F19"
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "When the delete matches a row the book is removed; the no-op path is covered by moment."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no near-duplicate."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "Only item_id (the shelf item's id), so it can't be joined to book_added / book_shelf_changed, which carry book_id, and it has no shelf, so the plan's question 'from which shelf' can't be answered.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:55",
+       "quote": "await track(user.id, \"book_removed\", { item_id: itemId });"
+      }
+     ],
+     "finding": "F19"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "itemId is the hidden input value set to item.id on the shelves page; filled on every submit from the UI."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "item_id is taken from the form, not from a deleted row, so it can be an id that isn't the reader's or doesn't exist.",
+     "evidence": [
+      {
+       "code": "app/actions/shelf.ts:53",
+       "quote": "const itemId = String(form.get(\"itemId\") ?? \"\");"
+      }
+     ],
+     "finding": "F19"
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Nothing else is in scope: deleteMany returns only a count, so book_id and shelf need the item loaded first (part of the properties fix)."
+    }
+   },
+   "area": "library"
+  },
+  {
+   "name": "review_submitted",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "app/actions/reviews.ts:30",
+     "quote": "await track(user.id, \"review_submitted\", { book_id: bookId, rating, review: body, has_text: body.length > 0 });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "saveReview is posted by the Save review form on /books/[id]/review (app/books/[id]/review/page.tsx:32); valid rating and a Finished book reach track()."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Sent on the server after db.review.upsert resolves; the invalid-rating and not-finished branches redirect (which throws) before the write and the call."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "The review page is the only writer of reviews; 'Rate and review' and 'Review' links all lead to it."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One call per request; a resubmit is an edit, which the plan says is included."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The review row exists when it fires; description matches the code (new and edited reviews)."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action; no near-duplicate."
+    },
+    "properties": {
+     "result": "problem",
+     "why": "Sends review, the full text the reader typed (up to 5000 chars), as an event property; the analysis needs only its length (char_count). No way to tell a new review from an edit.",
+     "evidence": [
+      {
+       "code": "app/actions/reviews.ts:30",
+       "quote": "await track(user.id, \"review_submitted\", { book_id: bookId, rating, review: body, has_text: body.length > 0 });"
+      }
+     ],
+     "finding": "F3"
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "rating is checked integer 1..5 before; book_id is the form value of a finished shelf item; has_text is a boolean; review is \"\" when no text, which the plan's only_when allows (but see values_sensible)."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "review is raw typed text: personal data, forbidden by context.md Privacy and good-vs-bad 'Personal data'.",
+     "evidence": [
+      {
+       "code": "app/actions/reviews.ts:12",
+       "quote": "const body = String(form.get(\"body\") ?? \"\").trim().slice(0, 5000);"
+      }
+     ],
+     "finding": "F3"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "body.length is in scope and would replace the review text.",
+     "suggestions": [
+      "S5"
+     ]
+    }
+   },
+   "area": "library"
+  },
+  {
+   "name": "cta_clicked",
+   "tier": "funnel",
+   "calls": [
+    {
+     "code": "components/analytics/track-link.tsx:9",
+     "quote": "<Link href={href} className={className} onClick={() => capture(event, properties)}>"
+    },
+    {
+     "code": "app/page.tsx:29",
+     "quote": "<TrackLink href={cta} className=\"btn\" event=\"cta_clicked\" properties={{ cta: \"hero\", plan: \"pro\", is_logged_in: !!user }}>"
+    },
+    {
+     "code": "app/page.tsx:50",
+     "quote": "properties={{ cta: \"plan_card\", plan: plan.name, is_logged_in: !!user }}"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "TrackLink is rendered by the landing page (app/page.tsx:29 hero, :46 each pricing card); its onClick calls capture(), which sends once posthog-js has loaded after cookie consent (lib/analytics/client.ts:21). Reachable; no data to say whether it arrives."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Intent event on the link's onClick, sent from the browser, which is the side that knows the click happened. Next Link navigates client-side, so the page doesn't unload before posthog queues the event. Nothing sent before consent (capture returns while posthog isn't loaded)."
+    },
+    "paths": {
+     "result": "problem",
+     "why": "The nav's Sign up link is a call to action into sign-up on every page (including /) and sends nothing, so 'which CTAs bring visitors to sign-up' misses that way in. The plan documents the gap but doesn't justify it.",
+     "evidence": [
+      {
+       "code": "components/nav.tsx:32",
+       "quote": "<Link href=\"/signup\" className=\"btn\">"
+      }
+     ],
+     "finding": "F28"
+    },
+    "once": {
+     "result": "ok",
+     "why": "One capture per click in an onClick handler; no render or effect trigger; no server sender of the same event."
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "A call to action was clicked when it fires; the plan's description matches the two call sites and the consent gate."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action matching _conventions.yaml event_pattern; no near-duplicate in the plan."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "cta, plan and is_logged_in are passed on both call sites (page.tsx:29 and :50); no outcome, so no status needed."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "cta and plan are literals or PLANS constants; is_logged_in is !!user, always a boolean."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "plan splits by casing: the hero sends the literal \"pro\" while the cards send the display name plan.name (\"Free\", \"Pro\"), so Pro appears as two values; the plan's values: [pro, Free, Pro] records the split. The hero's plan \"pro\" is also hard-coded for signed-in visitors, whose hero link goes to /shelves, not a Pro sign-up.",
+     "evidence": [
+      {
+       "code": "app/page.tsx:29",
+       "quote": "properties={{ cta: \"hero\", plan: \"pro\", is_logged_in: !!user }}"
+      },
+      {
+       "code": "app/page.tsx:50",
+       "quote": "properties={{ cta: \"plan_card\", plan: plan.name, is_logged_in: !!user }}"
+      },
+      {
+       "code": "app/page.tsx:19",
+       "quote": "const cta = user ? \"/shelves\" : \"/signup?plan=pro\";"
+      }
+     ],
+     "finding": "F28"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "The link's destination is computed at the call site and tells a sign-up click from an upgrade click.",
+     "suggestions": [
+      "S6"
+     ]
+    }
+   },
+   "area": "marketing-site"
+  },
+  {
+   "name": "$pageview",
+   "tier": "other",
+   "calls": [
+    {
+     "code": "components/analytics/analytics-provider.tsx:37",
+     "quote": "posthog.capture(\"$pageview\", { $current_url: window.location.href });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "AnalyticsProvider is rendered in the root layout (app/layout.tsx:25) on every route; the effect sends once posthog has loaded after consent."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Effect after render, on ready and every pathname/searchParams change: a page view per client navigation."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "The root layout wraps every page of the site and app."
+    },
+    "once": {
+     "result": "problem",
+     "why": "posthog.init has capture_pageview: true, so posthog-js sends its own $pageview for the first page, and the provider's effect sends another as soon as ready flips to true: the first page of every consented visit is counted twice.",
+     "evidence": [
+      {
+       "code": "components/analytics/analytics-provider.tsx:22",
+       "quote": "capture_pageview: true,"
+      },
+      {
+       "code": "components/analytics/analytics-provider.tsx:37",
+       "quote": "posthog.capture(\"$pageview\", { $current_url: window.location.href });"
+      }
+     ],
+     "finding": "F29"
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "PostHog's reserved page view event, sent on page change."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "PostHog's built-in name; the convention pattern doesn't apply to reserved $ events."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "$current_url sent on the one call; PostHog adds the rest."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "window.location.href is always set in the browser effect."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "$current_url is the full URL with its query string. The search form submits by GET, so /search?q=<typed title> puts the text a reader typed on every search page view, which the team's privacy rule forbids; a kept URL should drop its query string.",
+     "evidence": [
+      {
+       "code": "components/analytics/analytics-provider.tsx:37",
+       "quote": "posthog.capture(\"$pageview\", { $current_url: window.location.href });"
+      },
+      {
+       "code": "app/search/page.tsx:32",
+       "quote": "<form className=\"grid gap-3 sm:grid-cols-5\" method=\"get\">"
+      },
+      {
+       "code": "app/search/page.tsx:33",
+       "quote": "<input className=\"input sm:col-span-2\" name=\"q\" placeholder=\"Title\" defaultValue={q} />"
+      }
+     ],
+     "finding": "F5"
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "Tier other: no suggestions."
+    }
+   },
+   "area": "marketing-site"
+  },
+  {
+   "name": "mobile_shelves_fetched",
+   "tier": "core",
+   "calls": [
+    {
+     "code": "app/api/shelves/route.ts:17",
+     "quote": "await track(user.id, \"mobile_shelves_fetched\", { book_count: items.length, platform: \"ios\" });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "Reachable: an exported GET route handler; the call runs on every authenticated request after db.shelfItem.findMany resolves, with no flag or early return in front of it other than the 401. No data, so arrival is not known."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Sent on the server after the shelf items load (await db.shelfItem.findMany at :11) and before the JSON response; the unauthenticated branch returns 401 at :9 first, and a throwing query never reaches the call."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "GET /api/shelves is the only route that serves shelves to the app; nothing in the web app calls it (the web /shelves page reads the database directly), so there is no other path for the mobile fetch."
+    },
+    "once": {
+     "result": "ok",
+     "why": "One awaited call per request, in a route handler, no render or effect trigger. Each app refresh is a separate fetch and counts once."
+    },
+    "name_accurate": {
+     "result": "problem",
+     "why": "The name says the mobile app fetched shelves, but the route accepts the shelfie_session cookie too, so a signed-in browser that opens /api/shelves sends mobile_shelves_fetched; the code can tell the two apart (bearer vs cookie) but doesn't. The plan's description admits this.",
+     "evidence": [
+      {
+       "code": "lib/auth.ts:68",
+       "quote": "const cookie = req.headers.get(\"cookie\") ?? \"\";"
+      },
+      {
+       "code": "app/api/shelves/route.ts:8",
+       "quote": "const user = await userFromRequest(req);"
+      }
+     ],
+     "finding": "F27"
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action (shelves_fetched) with a mobile prefix; no other shelves event in the plan means the same."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "book_count and platform, the plan's two properties, are both on the single call. A read with no failure outcome needs no status; the 401 is not an outcome of this action. distinct id is user.id, the id identify uses."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "book_count is items.length, always a number (0 for an empty library); platform is a literal. Neither can be null or undefined."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "platform is hard-coded \"ios\" on every request, whatever sent it: cookie requests from a browser and any Android client are recorded as ios, and the server event's platform overrides nothing useful (the client super property platform=web isn't on server events). The plan's values: [ios] locks the constant in. Derive it from the request (bearer vs cookie, or the User-Agent / an X-Platform header the app sends).",
+     "evidence": [
+      {
+       "code": "app/api/shelves/route.ts:17",
+       "quote": "platform: \"ios\" });"
+      },
+      {
+       "code": "lib/auth.ts:65",
+       "quote": "if (header?.toLowerCase().startsWith(\"bearer \")) {"
+      }
+     ],
+     "finding": "F27"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "Two values already in scope at the call site would answer questions the event can't.",
+     "suggestions": [
+      "S7",
+      "S8"
+     ]
+    }
+   },
+   "area": "mobile-api"
+  },
+  {
+   "name": "onboarding_step_completed",
+   "tier": "onboarding",
+   "calls": [
+    {
+     "code": "app/actions/onboarding.ts:23",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: 1, step_name: \"genres\", genres: picked, genre_count: picked.length });"
+    },
+    {
+     "code": "app/actions/onboarding.ts:38",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: form.get(\"step\") ?? 2, step_name: \"goal\", yearly_goal: goal });"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "ok",
+     "why": "Both calls are reachable: each sits in an exported server action (saveGenres, saveGoal) posted by the form on /onboarding/genres and /onboarding/goal, before redirect(), and track() is awaited."
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Server-side, after validation (redirect on an empty pick or a goal outside 1 to 365 throws first) and after db.user.update resolves: an outcome sent once the answer is saved."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "saveGenres and saveGoal are the only writers of favoriteGenres and yearlyGoal; signup redirects to /onboarding/genres and login resumes at the saved step (app/actions/auth.ts:42), both landing on the same forms. The third screen is covered by onboarding_completed, as the plan says."
+    },
+    "once": {
+     "result": "problem",
+     "why": "The onboarding pages only check the session, so a reader who goes back (browser back, or the URL) and submits again sends a second onboarding_step_completed for the same step; the write keeps onboardingStep with Math.max and nothing marks the repeat.",
+     "evidence": [
+      {
+       "code": "app/onboarding/genres/page.tsx:12",
+       "quote": "const user = await requireUser();"
+      },
+      {
+       "code": "app/actions/onboarding.ts:21",
+       "quote": "data: { favoriteGenres: picked.join(\",\"), onboardingStep: Math.max(user.onboardingStep, 2) },"
+      }
+     ],
+     "finding": "F12"
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "The screen's answer is saved when it fires; the plan's description matches the code (steps 1 and 2 only, not on refusals)."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action matching the convention pattern; one event with step/step_name instead of one per screen is allowed and no near-duplicate exists."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "step and step_name on both calls; genres and genre_count on the genres call, yearly_goal on the goal call, matching their only_when."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "picked is non-empty (empty redirects), goal is a validated integer, step falls back to 2 when the hidden field is missing."
+    },
+    "values_sensible": {
+     "result": "problem",
+     "why": "step is the number 1 on the genres screen but form.get(\"step\") on the goal screen, the string \"2\" from a hidden input: a type split against the plan's numeric type, and a value the browser controls.",
+     "evidence": [
+      {
+       "code": "app/actions/onboarding.ts:38",
+       "quote": "await track(user.id, \"onboarding_step_completed\", { step: form.get(\"step\") ?? 2, step_name: \"goal\", yearly_goal: goal });"
+      },
+      {
+       "code": "app/onboarding/goal/page.tsx:20",
+       "quote": "<input type=\"hidden\" name=\"step\" value=\"2\" />"
+      }
+     ],
+     "finding": "F13"
+    },
+    "could_carry": {
+     "result": "suggestion",
+     "why": "Two values already in scope from requireUser answer questions this event can't.",
+     "suggestions": [
+      "S9",
+      "S10"
+     ]
+    }
+   },
+   "area": "onboarding"
+  },
+  {
+   "name": "onboarding_completed",
+   "tier": "onboarding",
+   "calls": [
+    {
+     "code": "app/actions/onboarding.ts:59",
+     "quote": "await track(user.id, \"onboarding_completed\", completed);"
+    }
+   ],
+   "checks": {
+    "fires": {
+     "result": "problem",
+     "why": "Unreachable: the call sits after redirect(\"/shelves?welcome=1\"), which throws, so addFirstBook never reaches it. The track() helper itself says to call it before redirect().",
+     "evidence": [
+      {
+       "code": "app/actions/onboarding.ts:58",
+       "quote": "redirect(\"/shelves?welcome=1\");"
+      },
+      {
+       "code": "app/actions/onboarding.ts:59",
+       "quote": "await track(user.id, \"onboarding_completed\", completed);"
+      }
+     ],
+     "finding": "F11"
+    },
+    "moment": {
+     "result": "ok",
+     "why": "Apart from the redirect (C1), it is placed right: server-side after the book is found, the shelf item upserted and onboardingStep set to 4. Moving it above line 58 fixes it."
+    },
+    "paths": {
+     "result": "ok",
+     "why": "addFirstBook is the only place that sets onboardingStep to 4; there is no skip-onboarding path."
+    },
+    "once": {
+     "result": "problem",
+     "why": "Once it runs, a reader who returns to /onboarding/first-book (the page only checks the session) and submits again sends onboarding_completed a second time; addFirstBook sets onboardingStep 4 without checking it was already 4.",
+     "evidence": [
+      {
+       "code": "app/onboarding/first-book/page.tsx:12",
+       "quote": "const user = await requireUser();"
+      },
+      {
+       "code": "app/actions/onboarding.ts:53",
+       "quote": "await db.user.update({ where: { id: user.id }, data: { onboardingStep: 4 } });"
+      }
+     ],
+     "finding": "F12"
+    },
+    "name_accurate": {
+     "result": "ok",
+     "why": "Onboarding is finished (onboardingStep 4 saved) at the point of the call; the plan's description matches the code, including that it never runs today."
+    },
+    "name_clear": {
+     "result": "ok",
+     "why": "snake_case object_action, the standard onboarding end event, no near-duplicate."
+    },
+    "properties": {
+     "result": "ok",
+     "why": "book_id and genre, as planned, on the single call; the action can't fail after the book is found, so no status needed."
+    },
+    "values_filled": {
+     "result": "ok",
+     "why": "book is non-null past the redirect at line 46; book.id and book.genre (String, not optional in the schema) are always set."
+    },
+    "values_sensible": {
+     "result": "ok",
+     "why": "book_id is the book row id, genre the book's genre from the catalogue (the GENRES list), no personal data."
+    },
+    "could_carry": {
+     "result": "ok",
+     "why": "No other value at the call site answers a question this event can't; the goal and genres are already on the step events."
+    }
+   },
+   "area": "onboarding"
+  }
+ ],
+ "property_suggestions": [
+  {
+   "id": "S1",
+   "event": "user_logged_in",
+   "property": "plan",
+   "type": "string",
+   "question": "Do Pro readers come back (log in) more often than Free readers, including those who never accepted cookies and so never get the plan user property?",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:41",
+     "quote": "await track(user.id, \"user_logged_in\", { onboarding_step: user.onboardingStep, resumed_onboarding: user.onboardingStep < 4 });"
+    }
+   ]
+  },
+  {
+   "id": "S2",
+   "event": "checkout_failed",
+   "property": "http_status",
+   "type": "numeric",
+   "question": "Do failed checkouts come from bad requests (400), unknown readers (404) or server errors (500)?",
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:47",
+     "quote": "if (!res.ok) {"
+    }
+   ]
+  },
+  {
+   "id": "S3",
+   "event": "payment_succeeded",
+   "property": "days_since_signup",
+   "type": "numeric",
+   "question": "How long after signing up do readers upgrade to Pro?",
+   "evidence": [
+    {
+     "code": "app/api/payments/webhook/route.ts:32",
+     "quote": "const user = await db.user.findUnique({ where: { id: userId } });"
+    }
+   ]
+  },
+  {
+   "id": "S4",
+   "event": "subscription_canceled",
+   "property": "detail_char_count",
+   "type": "numeric",
+   "question": "How many cancelling readers explain themselves, and does it differ by reason?",
+   "evidence": [
+    {
+     "code": "app/actions/subscription.ts:13",
+     "quote": "const detail = String(form.get(\"detail\") ?? \"\").trim().slice(0, 1000);"
+    }
+   ]
+  },
+  {
+   "id": "S5",
+   "event": "review_submitted",
+   "property": "char_count",
+   "type": "numeric",
+   "question": "Do readers who write longer reviews come back more, and how long are reviews (in place of sending the text)?",
+   "evidence": [
+    {
+     "code": "app/actions/reviews.ts:12",
+     "quote": "const body = String(form.get(\"body\") ?? \"\").trim().slice(0, 5000);"
+    }
+   ]
+  },
+  {
+   "id": "S6",
+   "event": "cta_clicked",
+   "property": "destination",
+   "type": "string",
+   "question": "How many landing-page CTA clicks lead to sign-up versus straight to checkout (an upgrade) or the shelves?",
+   "evidence": [
+    {
+     "code": "app/page.tsx:47",
+     "quote": "href={user ? (plan.name === \"Pro\" ? \"/checkout\" : \"/shelves\") : `/signup?plan=${plan.name.toLowerCase()}`}"
+    }
+   ]
+  },
+  {
+   "id": "S7",
+   "event": "mobile_shelves_fetched",
+   "property": "auth_method",
+   "type": "string",
+   "question": "How many of these fetches really come from the mobile app (bearer token) rather than a browser session cookie?",
+   "evidence": [
+    {
+     "code": "lib/auth.ts:64",
+     "quote": "const header = req.headers.get(\"authorization\");"
+    }
+   ]
+  },
+  {
+   "id": "S8",
+   "event": "mobile_shelves_fetched",
+   "property": "reading_count",
+   "type": "numeric",
+   "question": "Do mobile readers open the app while they are actively reading a book (books on the Reading shelf), or only to browse what they want to read?",
+   "evidence": [
+    {
+     "code": "app/api/shelves/route.ts:24",
+     "quote": ".filter((i) => i.shelf === s.id)"
+    }
+   ]
+  },
+  {
+   "id": "S9",
+   "event": "onboarding_step_completed",
+   "property": "goal_changed",
+   "type": "boolean",
+   "question": "On the goal screen, do readers keep the suggested goal of 12 or set their own? (goal !== user.yearlyGoal, step_name=goal only)",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:28",
+     "quote": "const user = await requireUser();"
+    },
+    {
+     "code": "app/onboarding/goal/page.tsx:30",
+     "quote": "defaultValue={user.yearlyGoal}"
+    }
+   ]
+  },
+  {
+   "id": "S10",
+   "event": "onboarding_step_completed",
+   "property": "is_revisit",
+   "type": "boolean",
+   "question": "How many step completions are readers going back to change an answer rather than moving forward? (user.onboardingStep already past this step)",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:21",
+     "quote": "data: { favoriteGenres: picked.join(\",\"), onboardingStep: Math.max(user.onboardingStep, 2) },"
+    }
+   ]
+  }
+ ],
+ "property_conditions": [
+  {
+   "id": "W1",
+   "event": "checkout_failed",
+   "property": "card_last4",
+   "only_when": "reason=invalid_card",
+   "why": "Only the invalid-card branch sends it; the payment_failed branch has no card value to send (the value itself is a C9 problem).",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "app/checkout/checkout-form.tsx:23",
+     "quote": "capture(\"checkout_failed\", { reason: \"invalid_card\", card_last4: card.slice(-4) });"
+    },
+    {
+     "code": "app/checkout/checkout-form.tsx:49",
+     "quote": "capture(\"checkout_failed\", { reason: \"payment_failed\" });"
+    }
+   ]
+  },
+  {
+   "id": "W2",
+   "event": "subscription_canceled",
+   "property": "detail",
+   "only_when": "the reader typed something in \"Anything else?\" (required when reason=other)",
+   "why": "The textarea is optional except for Other (enforced at :18); otherwise detail is sent as \"\" (the value itself is a C9 problem).",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "app/actions/subscription.ts:18",
+     "quote": "if (reason === \"other\" && !detail) {"
+    },
+    {
+     "code": "app/actions/subscription.ts:13",
+     "quote": "const detail = String(form.get(\"detail\") ?? \"\").trim().slice(0, 1000);"
+    }
+   ]
+  },
+  {
+   "id": "W3",
+   "event": "search_performed",
+   "property": "genre",
+   "only_when": "a genre filter is set",
+   "why": "With 'Any genre' selected there is no genre to send; the tracker sends null.",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "components/analytics/search-tracker.tsx:11",
+     "quote": "genre: genre || null,"
+    },
+    {
+     "code": "app/search/page.tsx:35",
+     "quote": "<option value=\"\">Any genre</option>"
+    }
+   ]
+  },
+  {
+   "id": "W4",
+   "event": "search_performed",
+   "property": "year",
+   "only_when": "a year filter is set",
+   "why": "With 'Any year' selected there is no year to send; the tracker sends null.",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "components/analytics/search-tracker.tsx:12",
+     "quote": "year: year ? Number(year) : null,"
+    },
+    {
+     "code": "app/search/page.tsx:41",
+     "quote": "<option value=\"\">Any year</option>"
+    }
+   ]
+  },
+  {
+   "id": "W5",
+   "event": "search_performed",
+   "property": "author",
+   "only_when": "an author filter is set",
+   "why": "With 'Any author' selected there is no author to send; the tracker sends null.",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "components/analytics/search-tracker.tsx:13",
+     "quote": "author: author || null,"
+    },
+    {
+     "code": "app/search/page.tsx:47",
+     "quote": "<option value=\"\">Any author</option>"
+    }
+   ]
+  },
+  {
+   "id": "W6",
+   "event": "onboarding_step_completed",
+   "property": "genres",
+   "only_when": "step_name=genres",
+   "why": "Only the genres screen asks for genres; the goal screen has none to send.",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:23",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: 1, step_name: \"genres\", genres: picked, genre_count: picked.length });"
+    },
+    {
+     "code": "app/actions/onboarding.ts:38",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: form.get(\"step\") ?? 2, step_name: \"goal\", yearly_goal: goal });"
+    }
+   ]
+  },
+  {
+   "id": "W7",
+   "event": "onboarding_step_completed",
+   "property": "genre_count",
+   "only_when": "step_name=genres",
+   "why": "The count of picked genres exists only on the genres screen.",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:23",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: 1, step_name: \"genres\", genres: picked, genre_count: picked.length });"
+    },
+    {
+     "code": "app/actions/onboarding.ts:38",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: form.get(\"step\") ?? 2, step_name: \"goal\", yearly_goal: goal });"
+    }
+   ]
+  },
+  {
+   "id": "W8",
+   "event": "onboarding_step_completed",
+   "property": "yearly_goal",
+   "only_when": "step_name=goal",
+   "why": "The goal is the goal screen's answer; the genres screen doesn't set it.",
+   "in_plan": true,
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:38",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: form.get(\"step\") ?? 2, step_name: \"goal\", yearly_goal: goal });"
+    },
+    {
+     "code": "app/actions/onboarding.ts:23",
+     "quote": "await track(user.id, \"onboarding_step_completed\", { step: 1, step_name: \"genres\", genres: picked, genre_count: picked.length });"
+    }
+   ]
+  }
+ ],
+ "incomplete_areas": [],
+ "dismissed": [],
+ "baselined": [
+  {
+   "rule": "R035",
+   "where": "goal_reminder_sent",
+   "why": "Sent by a command-line job (npm run job:goal-check), which follows no HTTP request; fires_at says how to run it in from"
+  }
+ ],
+ "not_proposed": [
+  {
+   "area": "accounts",
+   "action": "Reader logs out",
+   "reason": "No product question an event answers. But logout needs an identity reset (posthog.reset in the client): _identity.yaml has no reset key and nothing calls reset, so the next reader on the same browser keeps the previous reader's distinct id until identify runs.",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:45",
+     "quote": "export async function logout() {"
+    }
+   ]
+  },
+  {
+   "area": "billing",
+   "action": "Cancel form rejected (no reason picked, or Other without detail)",
+   "reason": "Validation redirects on a required field (the radio is HTML-required, so the first can't happen from the form); a refusal before the work, which subscription_cancel_started without subscription_canceled already shows as drop-off.",
+   "evidence": [
+    {
+     "code": "app/actions/subscription.ts:19",
+     "quote": "redirect(\"/settings/cancel?error=Tell+us+a+little+more\");"
+    }
+   ]
+  },
+  {
+   "area": "billing",
+   "action": "Cancel submitted with no active subscription",
+   "reason": "Only a stale tab or a second submit reaches it; nothing changes and nobody decides anything from it.",
+   "evidence": [
+    {
+     "code": "app/actions/subscription.ts:26",
+     "quote": "if (!subscription) redirect(\"/settings\");"
+    }
+   ]
+  },
+  {
+   "area": "billing",
+   "action": "Upgrade to Pro link in settings",
+   "reason": "Navigation into checkout; checkout_started covers the intent and should carry entry_point=settings instead of its own event.",
+   "evidence": [
+    {
+     "code": "app/settings/page.tsx:28",
+     "quote": "<Link href=\"/checkout\" className=\"btn\">Upgrade to Pro</Link>"
+    }
+   ]
+  },
+  {
+   "area": "billing",
+   "action": "Cancel subscription link in settings",
+   "reason": "Navigation into the cancel flow; covered by the proposed subscription_cancel_started.",
+   "evidence": [
+    {
+     "code": "app/settings/page.tsx:26",
+     "quote": "<Link href=\"/settings/cancel\" className=\"btn-secondary\">Cancel subscription</Link>"
+    }
+   ]
+  },
+  {
+   "area": "billing",
+   "action": "Welcome to Pro / subscription canceled confirmation banners",
+   "reason": "Screen state after an outcome the server already sends; no decision rides on the view.",
+   "evidence": [
+    {
+     "code": "app/settings/page.tsx:19",
+     "quote": "{upgraded && <p className=\"text-sm text-green-700\">Welcome to Pro.</p>}"
+    }
+   ]
+  },
+  {
+   "area": "goals",
+   "action": "Weekly goal-check job run completes (users checked, number behind)",
+   "reason": "Job health is ops monitoring, not a product question; per-reader outcomes are already goal_reminder_sent.",
+   "evidence": [
+    {
+     "code": "jobs/weekly-goal-check.ts:48",
+     "quote": "console.log(`Checked ${users.length} users; ${behind} behind pace for week of ${weekOf.toISOString().slice(0, 10)}.`);"
+    }
+   ]
+  },
+  {
+   "area": "goals",
+   "action": "Goal progress shown on /shelves ('N of goal books finished this year')",
+   "reason": "Screen view with no decision; autocapture page views cover it.",
+   "evidence": [
+    {
+     "code": "app/shelves/page.tsx:29",
+     "quote": "{finishedThisYear} of {user.yearlyGoal} books finished this year."
+    }
+   ]
+  },
+  {
+   "area": "goals",
+   "action": "Delivering the goal reminder to the reader (email/notification)",
+   "reason": "No delivery exists in the code; when one is built it should send the outcome (goal_reminder_sent with status/failure_reason, or rename via deprecation) — raised under goal_reminder_sent.name_accurate.",
+   "evidence": [
+    {
+     "code": "jobs/weekly-goal-check.ts:35",
+     "quote": "await db.goalReminder.upsert({"
+    }
+   ]
+  },
+  {
+   "area": "invites",
+   "action": "Invite refused (email without @, self-invite)",
+   "reason": "Not a separate event: it belongs on invite_sent as status=failed with failure_reason=invalid_email|self_invite (raised as the invite_sent.properties problem).",
+   "evidence": [
+    {
+     "code": "app/actions/invites.ts:14",
+     "quote": "if (!email.includes(\"@\")) redirect(\"/invite?error=Enter+your+friend%27s+email\");"
+    }
+   ]
+  },
+  {
+   "area": "invites",
+   "action": "Opens the invite page / views the list of sent invites",
+   "reason": "A screen view with no decision; autocapture covers it, and invite_sent with status measures the flow.",
+   "evidence": [
+    {
+     "code": "app/invite/page.tsx:6",
+     "quote": "export default async function InvitePage({"
+    }
+   ]
+  },
+  {
+   "area": "invites",
+   "action": "Clicks the Invite link in the nav",
+   "reason": "Navigation with one entry point; the invite form cannot be abandoned mid-flow in a way an intent event would reveal beyond page views.",
+   "evidence": [
+    {
+     "code": "components/nav.tsx:17",
+     "quote": "<Link href=\"/invite\">Invite</Link>"
+    }
+   ]
+  },
+  {
+   "area": "library",
+   "action": "Opens a book's page",
+   "reason": "A screen view with no decision on it; $pageview already covers it, and the actions taken there (add to shelf, review) have their own events.",
+   "evidence": [
+    {
+     "code": "app/books/[id]/page.tsx:8",
+     "quote": "export default async function BookPage({"
+    }
+   ]
+  },
+  {
+   "area": "library",
+   "action": "Review refused (no rating, or book not on the Finished shelf)",
+   "reason": "The rating radio is required in the form and the review page redirects away unless the book is finished, so these branches are only reached by a hand-crafted request; no question needs them.",
+   "evidence": [
+    {
+     "code": "app/actions/reviews.ts:14",
+     "quote": "if (!Number.isInteger(rating) || rating < 1 || rating > 5) {"
+    }
+   ]
+  },
+  {
+   "area": "library",
+   "action": "Quick add or add to shelf fails (book not found, unknown shelf)",
+   "reason": "Thrown errors only reachable with a tampered form (ids and shelves come from the page); an error tracker matter, not analytics.",
+   "evidence": [
+    {
+     "code": "app/actions/search.ts:13",
+     "quote": "if (!book) throw new Error(\"Book not found\");"
+    }
+   ]
+  },
+  {
+   "area": "marketing-site",
+   "action": "Visitor clicks 'Log in' in the nav",
+   "reason": "Marketing-site navigation, not a call into sign-up; the login outcome is user_logged_in on the server.",
+   "evidence": [
+    {
+     "code": "components/nav.tsx:29",
+     "quote": "<Link href=\"/login\" className=\"ml-auto\">"
+    }
+   ]
+  },
+  {
+   "area": "marketing-site",
+   "action": "Visitor accepts or declines cookies",
+   "reason": "Dismissing a banner; a decline can't be sent (no consent) and an accept only shows as the analytics starting, so the event would answer nothing reliably.",
+   "evidence": [
+    {
+     "code": "components/analytics/consent-banner.tsx:15",
+     "quote": "function choose(value: \"granted\" | \"denied\") {"
+    }
+   ]
+  },
+  {
+   "area": "mobile-api",
+   "action": "Unauthorized request refused (401)",
+   "reason": "An auth refusal on a read endpoint with no known user to attach it to; expired tokens and probes carry no product decision, and it belongs in server logs, not analytics.",
+   "evidence": [
+    {
+     "code": "app/api/shelves/route.ts:9",
+     "quote": "if (!user) return NextResponse.json({ error: \"Unauthorized\" }, { status: 401 });"
+    }
+   ]
+  },
+  {
+   "area": "onboarding",
+   "action": "Completes the third onboarding screen (first book) with no onboarding_step_completed step 3",
+   "reason": "onboarding_completed is this screen's completion event (once moved before the redirect); a step-3 event would double-count the same moment.",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:42",
+     "quote": "export async function addFirstBook(form: FormData) {"
+    }
+   ]
+  },
+  {
+   "area": "onboarding",
+   "action": "Onboarding screen refuses the answer (no genre picked, goal outside 1 to 365, no book picked)",
+   "reason": "Validation refusals before any work; the browser's required/min/max already block most, and drop-off shows as a missing next step event. Raise later if the drop-off needs explaining.",
+   "evidence": [
+    {
+     "code": "app/actions/onboarding.ts:17",
+     "quote": "if (picked.length === 0) redirect(\"/onboarding/genres?error=Pick+at+least+one+genre\");"
+    }
+   ]
+  },
+  {
+   "area": "onboarding",
+   "action": "Signed-in reader lands on an onboarding screen (signup redirect or login resume)",
+   "reason": "The start is user_signed_up and user_logged_in (resumed_onboarding); screen views carry no decision and $pageview covers them.",
+   "evidence": [
+    {
+     "code": "app/actions/auth.ts:42",
+     "quote": "redirect(user.onboardingStep < 4 ? onboardingPath(user.onboardingStep) : \"/shelves\");"
+    }
+   ]
+  }
+ ],
+ "not_read": []
+}
