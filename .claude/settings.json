@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "datalyze": {
+      "source": {
+        "source": "github",
+        "repo": "joindatalyze/claude-plugins"
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "datalyze@datalyze": true
+  }
+}

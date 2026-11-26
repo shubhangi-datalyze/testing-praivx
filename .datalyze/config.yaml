@@ -1,0 +1,5 @@
+# Datalyze Tracking Agent: settings for this repo. Written by setup; yours to edit.
+# registry: where the tracking plan is. reviewers: GitHub logins or @org/team whose approval
+# counts (empty: anyone with write access). analytics: the tool the audit reads, read-only.
+registry: analytics/registry
+reviewers: []
