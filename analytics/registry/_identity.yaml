@@ -1,0 +1,17 @@
+identify:
+  when: >-
+    On every page load and route change of a signed-in reader once analytics has started (after cookie
+    consent), from AnalyticsProvider (components/analytics/analytics-provider.tsx:42). Sends email, plan and
+    signed_up_at as person properties with it.
+  id_source: users.id
+alias: null
+server:
+  id_source: >-
+    The first argument of track() in lib/analytics/server.ts:20, which each caller passes: user.id from the
+    session in every server action and route handler except signup, which passes the email
+    (app/actions/auth.ts:28); the weekly job passes user.id (jobs/weekly-goal-check.ts:41); the /api/events
+    relay passes the browser's distinct id, or "anonymous" before analytics starts (lib/analytics/client.ts:27).
+  same_as_client: false
+  why: >-
+    Most server events go out as users.id, the id identify uses, but user_signed_up goes out as the reader's
+    email, and search_performed (relayed) goes out as "anonymous" for every visitor who hasn't accepted cookies.

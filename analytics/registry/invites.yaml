@@ -1,0 +1,22 @@
+events:
+  - name: invite_sent
+    section: Invites
+    description: >-
+      Sent from the sendInvite server action after the invite row is saved. Not sent when the email has no @
+      or is the reader's own. Nothing is emailed: the invite is only stored.
+    question: How many readers invite friends, and how many invites include a note?
+    track_via: server
+    properties:
+      - { name: invitee_email, type: string, example: "(the friend's email address)" }
+      - { name: has_note, type: boolean, example: "false" }
+      - { name: meta, type: string, example: "(the sender's email address, from a hidden form field)" }
+    fires_at:
+      - page: /invite
+        element: button "Send invite"
+        trigger: server
+        api: POST /invite
+        from: Server action sendInvite, posted by the form on this page
+        needs: [signed_in]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }

@@ -1,0 +1,122 @@
+events:
+  - name: search_performed
+    section: Library
+    description: >-
+      Sent from the browser by SearchTracker each time the search page renders with its results: on opening
+      /search and again on every search or filter change. It goes through the first-party relay
+      (forward() to POST /api/events), which sends it from the server under the browser's distinct id, or the
+      literal "anonymous" when analytics hasn't started, so it is sent even when the visitor declined cookies.
+    question: How often do readers search, with which filters, and how often do they get no results?
+    track_via: client
+    properties:
+      - { name: query, type: string, example: dune }
+      - { name: genre, type: string, example: Fantasy | Mystery, only_when: a genre filter is set }
+      - { name: year, type: numeric, example: "2021", only_when: a year filter is set }
+      - { name: author, type: string, example: Frank Herbert, only_when: an author filter is set }
+      - { name: filter_count, type: numeric, example: 0 | 1 | 2 | 3, values: [0, 1, 2, 3] }
+      - { name: results_count, type: numeric, example: "4" }
+    fires_at:
+      - page: /search
+        element: button "Search"
+        trigger: page_load
+        api: POST /api/events
+        needs: [signed_in]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: book_added
+    section: Library
+    description: >-
+      Sent from the server when a book is put on a shelf: by quick add from the search results (only when the
+      book wasn't on a shelf yet, always to want_to_read) and from the book page's shelf form. The book page
+      sends it after an upsert, so it is also sent when a book already on a shelf is moved there with
+      "Update shelf". The first book added in onboarding doesn't send it.
+    question: How many books do readers add, to which shelf, and from where?
+    track_via: server
+    properties:
+      - { name: book_id, type: string, example: cm3k9x2ab0001qz8l4f7d2r5t }
+      - { name: shelf, type: string, example: want_to_read | reading | finished, values: [want_to_read, reading, finished] }
+      - { name: genre, type: string, example: Fiction | Fantasy }
+      - { name: source, type: string, example: search | book_page, values: [search, book_page] }
+    fires_at:
+      - page: /search
+        element: button "+ Want to read"
+        trigger: server
+        api: POST /search
+        from: Server action quickAdd, posted by the form on this page
+        needs: [signed_in, book not on a shelf]
+      - page: /books/[id]
+        element: button "Add to shelf"
+        trigger: server
+        api: POST /books/[id]
+        from: Server action addToShelf, posted by the form on this page
+        needs: [signed_in]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: book_shelf_changed
+    section: Library
+    description: >-
+      Sent from the moveShelf server action after the shelf item is updated, when a reader picks a shelf and
+      clicks Move on /shelves. Sent even when the shelf picked is the one the book is already on.
+    question: How many books move between shelves, and how many get finished?
+    track_via: server
+    properties:
+      - { name: book_id, type: string, example: cm3k9x2ab0001qz8l4f7d2r5t }
+      - { name: from_shelf, type: string, example: want_to_read | reading | finished, values: [want_to_read, reading, finished] }
+      - { name: to_shelf, type: string, example: want_to_read | reading | finished, values: [want_to_read, reading, finished] }
+    fires_at:
+      - page: /shelves
+        element: button "Move"
+        trigger: server
+        api: POST /shelves
+        from: Server action moveShelf, posted by the form on this page
+        needs: [signed_in, a book on a shelf]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: book_removed
+    section: Library
+    description: >-
+      Sent from the removeFromShelf server action after deleteMany, when a reader clicks Remove on /shelves.
+      Sent even when nothing was deleted (an item id that isn't the reader's).
+    question: How many books do readers remove from their shelves?
+    track_via: server
+    properties:
+      - { name: item_id, type: string, example: cm3k9x2ab0001qz8l4f7d2r5t }
+    fires_at:
+      - page: /shelves
+        element: button "Remove"
+        trigger: server
+        api: POST /shelves
+        from: Server action removeFromShelf, posted by the form on this page
+        needs: [signed_in, a book on a shelf]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: review_submitted
+    section: Library
+    description: >-
+      Sent from the saveReview server action after the review is saved, for a new review and for an edit.
+      Not sent when the rating is missing or the book isn't on the Finished shelf.
+    question: How many finished books get rated and reviewed, and what ratings do readers give?
+    track_via: server
+    properties:
+      - { name: book_id, type: string, example: cm3k9x2ab0001qz8l4f7d2r5t }
+      - { name: rating, type: numeric, example: 1 | 2 | 3 | 4 | 5, values: [1, 2, 3, 4, 5] }
+      - { name: review, type: string, example: "(the review text the reader typed)" }
+      - { name: has_text, type: boolean, example: "true" }
+    fires_at:
+      - page: /books/[id]/review
+        element: button "Save review"
+        trigger: server
+        api: POST /books/[id]/review
+        from: Server action saveReview, posted by the form on this page
+        needs: [signed_in, book on the Finished shelf]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }

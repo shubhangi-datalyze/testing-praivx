@@ -1,0 +1,20 @@
+events:
+  - name: mobile_shelves_fetched
+    section: Mobile API
+    description: >-
+      Sent from GET /api/shelves after the signed-in reader's shelf items are loaded, on every request, with
+      the session cookie or a bearer token. Not sent on a 401. platform is always "ios", whatever sent the
+      request.
+    question: How many readers use the mobile app each week, and how big are their shelves?
+    track_via: server
+    properties:
+      - { name: book_count, type: numeric, example: "7" }
+      - { name: platform, type: string, example: ios, values: [ios] }
+    fires_at:
+      - trigger: server
+        api: GET /api/shelves
+        from: Call GET /api/shelves with the shelfie_session cookie or Authorization Bearer <session token>; the mobile app does this
+        needs: [signed_in]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }

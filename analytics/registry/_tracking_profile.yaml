@@ -1,0 +1,38 @@
+version: 1
+tool: posthog
+stack:
+  - { path: ., language: typescript, framework: nextjs, sides: [client, server] }
+sdks:
+  - { package: posthog-js, side: client }
+  - { package: posthog-node, side: server }
+wrappers:
+  - { path: lib/analytics/client.ts, side: client, import: "import { capture, forward } from '@/lib/analytics/client'" }
+  - { path: lib/analytics/server.ts, side: server, import: "import { track } from '@/lib/analytics/server'" }
+  - { path: app/api/events/route.ts, side: server }
+calls:
+  - { callee: capture, from: '@/lib/analytics/client', side: client,
+      example: "capture(\"checkout_started\", { plan: \"pro\", amount: (amountCents / 100).toFixed(2) })", ref: app/checkout/checkout-form.tsx:13 }
+  - { callee: forward, from: '@/lib/analytics/client', side: client,
+      example: "forward(\"search_performed\", { ... })", ref: components/analytics/search-tracker.tsx:9 }
+  - { callee: track, from: '@/lib/analytics/server', side: server, name_arg: 1, props_arg: 2, adds: [app_version],
+      example: "await track(user.id, \"book_shelf_changed\", { book_id: item.bookId, from_shelf: item.shelf, to_shelf: shelf })", ref: app/actions/shelf.ts:47 }
+  - { callee: posthog.capture, from: '@/lib/analytics/client', side: client,
+      example: "posthog.capture(\"$pageview\", { $current_url: window.location.href })", ref: components/analytics/analytics-provider.tsx:37 }
+  - { kind: identify, callee: posthog.identify, from: '@/lib/analytics/client', side: client,
+      example: "posthog.identify(user.id, { email: user.email, plan: user.plan, signed_up_at: user.createdAt })", ref: components/analytics/analytics-provider.tsx:42 }
+  - { callee: posthog.capture, from: posthog-node, side: server, name_key: event,
+      example: "posthog.capture({ distinctId: user.id, event: \"goal_reminder_sent\", properties: { ... } })", ref: jobs/weekly-goal-check.ts:40 }
+direct_sdk: allow
+paths: { server: [app/actions/, app/api/, jobs/], client: [components/] }
+sdk_exceptions:
+  - { file: components/analytics/analytics-provider.tsx, pattern: "posthog\\.(capture|identify)", reason: "The provider starts posthog-js and sends page views and identify itself" }
+  - { file: jobs/weekly-goal-check.ts, pattern: "posthog\\.capture", reason: "The weekly job makes its own posthog-node client" }
+dynamic_names:
+  - { file: jobs/weekly-goal-check.ts, names: [goal_reminder_sent], why: "posthog.capture takes one object; its event key is the literal \"goal_reminder_sent\" (line 42)" }
+  - { file: components/analytics/track-link.tsx, names: [cta_clicked], why: "TrackLink takes the name as its event prop; app/page.tsx passes event=\"cta_clicked\" on both links" }
+notes:
+  - "components/analytics/analytics-provider.tsx registers platform=web and app_version on load (super properties, client only)"
+  - "lib/analytics/server.ts adds app_version to every server event"
+  - "app/api/events/route.ts relays forward() events (only search_performed) to the server wrapper, under the browser's distinct_id"
+  - "lib/logging/logEvent.ts is a console.debug logger in development, not analytics: logEvent calls never reach PostHog"
+  - "Client calls do nothing until the visitor accepts the cookie banner (capture returns while posthog isn't loaded)"

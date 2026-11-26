@@ -1,0 +1,53 @@
+events:
+  - name: onboarding_step_completed
+    section: Onboarding
+    description: >-
+      Sent from the server when a reader completes an onboarding screen and the answer is saved: the genres
+      screen (saveGenres, step 1) and the yearly goal screen (saveGoal, step 2). Not sent when the screen
+      refuses the answer (no genre picked, a goal outside 1 to 365). The third screen (first book) sends
+      no step event. The goal screen sends step from a hidden form field, as the text "2".
+    question: How many readers complete each onboarding screen, and where do they drop off?
+    track_via: server
+    properties:
+      - { name: step, type: numeric, example: 1 | 2, values: [1, 2] }
+      - { name: step_name, type: string, example: genres | goal, values: [genres, goal] }
+      - { name: genres, type: array, example: "[Fiction, Fantasy]", only_when: step_name=genres }
+      - { name: genre_count, type: numeric, example: "3", only_when: step_name=genres }
+      - { name: yearly_goal, type: numeric, example: "12", only_when: step_name=goal }
+    fires_at:
+      - page: /onboarding/genres
+        element: button "Continue"
+        trigger: server
+        api: POST /onboarding/genres
+        from: Server action saveGenres, posted by the form on this page
+        needs: [signed_in, at least one genre picked]
+      - page: /onboarding/goal
+        element: button "Continue"
+        trigger: server
+        api: POST /onboarding/goal
+        from: Server action saveGoal, posted by the form on this page
+        needs: [signed_in, goal between 1 and 365]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
+
+  - name: onboarding_completed
+    section: Onboarding
+    description: >-
+      Meant to be sent when the reader adds a first book on the last onboarding screen (addFirstBook).
+      The call sits after redirect("/shelves?welcome=1"), which throws, so it never runs today.
+    question: How many readers who sign up finish onboarding, and with which first book genre?
+    track_via: server
+    properties:
+      - { name: book_id, type: string, example: cm3k9x2ab0001qz8l4f7d2r5t }
+      - { name: genre, type: string, example: Fiction | Fantasy | Science Fiction }
+    fires_at:
+      - page: /onboarding/first-book
+        element: button "Add to Reading and finish"
+        trigger: server
+        api: POST /onboarding/first-book
+        from: Server action addFirstBook, posted by the form on this page
+        needs: [signed_in, a book picked]
+    changelog:
+      - { date: 2026-11-26, ref: audit, change: Added to the plan from the first audit }
+      - { date: 2026-11-26, ref: audit, change: Where it fires, added }
